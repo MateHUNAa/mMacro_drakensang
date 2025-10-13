@@ -1,22 +1,27 @@
 ﻿using mMacro.Core.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace mMacro.Core.Managers
 {
     [Flags]
     public enum KeyModifiers
     {
-        None = 0,
-        Ctrl = 1,
-        Alt = 2,
-        Shift = 4
+        None    = 0,
+        Ctrl    = 1,
+        Alt     = 2,
+        Shift   = 4
     }
 
     public class Keybind
     {
+        [JsonConverter(typeof(StringEnumConverter))]
         public Keys Key { get; set; } = Keys.None;
+        [JsonConverter(typeof(StringEnumConverter))]
         public KeyModifiers Modifiers { get; set; }
-        public Action Action { get; set; }
         public bool WasPressed { get; set; } = false;
+        [JsonIgnore]
+        public Action Action { get; set; }
 
         public Keybind(Keys key, Action action, KeyModifiers modifiers = KeyModifiers.None)
         {
@@ -43,15 +48,25 @@ namespace mMacro.Core.Managers
             m_config = ConfigManager.Load();
             foreach (var kvp in m_config.Keybinds)
             {
-                if (kvp.Value != null)
+                if (kvp.Value.Key != Keys.None)
                      m_bindings[kvp.Key] = kvp.Value;
             }
 
             m_instance = this;
+            AppDomain.CurrentDomain.ProcessExit +=OnApplicationClosed;
+        }
+
+        private void OnApplicationClosed(object? sender, EventArgs e)
+        {
+            SaveConfig();
         }
         public void Register(string name, Keys key, Action action, KeyModifiers modifiers = KeyModifiers.None)
         {
-            m_bindings[name] = new Keybind(key, action, modifiers);
+            if (!m_bindings.ContainsKey(name))
+            {
+                m_bindings[name] = new Keybind(key, action, modifiers);
+                Console.WriteLine($"[{name}] Keybind registered: ({key.ToString()})");
+            }
         }
         public bool IsListening(string keybindName) => m_listeningKeybindName == keybindName;
         public void Update()
@@ -97,7 +112,6 @@ namespace mMacro.Core.Managers
             if(m_bindings.ContainsKey(keybindName))
                 m_listeningKeybindName = keybindName;
         }
-
         private void HandleKeybindListening()
         {
             if (m_listeningKeybindName == null)
@@ -137,8 +151,25 @@ namespace mMacro.Core.Managers
             keybind.Modifiers = modifiers;
             keybind.WasPressed = true;
 
+            SaveConfig();
             m_awaitKeyRelease = true;
             m_listeningKeybindName = null;
+        }
+        public void SaveConfig()
+        {
+            m_config.Keybinds = new Dictionary<string, Keybind>(m_bindings);
+            ConfigManager.Save(m_config);
+            Console.WriteLine("All keybinds have been saved");
+        }
+        public void SetKeybind(string name, Keys key, KeyModifiers modifiers)
+        {
+            if (m_bindings.TryGetValue(name, out Keybind keybind))
+            {
+                keybind.Key = key;
+                keybind.Modifiers = modifiers;
+
+                SaveConfig();
+            }
         }
         private bool AnyKeyDown()
         {

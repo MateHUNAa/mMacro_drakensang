@@ -10,25 +10,33 @@ using System.Threading.Tasks;
 
 namespace mMacro.App
 {
-    public class Renderer : Overlay
+    public class Renderer(int screenWidth = 1920, int screenHeight = 1080) : Overlay(windowWidth: screenWidth, windowHeight: screenHeight)
     {
-        public Vector2 screenSize = new Vector2(1920, 1080);
+        public Vector2 screenSize = new Vector2(screenWidth, screenHeight);
         protected override void Render()
         {
+            ImGui.SetNextWindowSizeConstraints(new Vector2(600, 450), screenSize);
             ImGui.Begin("mMacro - Drakensang", ImGuiWindowFlags.NoBringToFrontOnFocus
                                              | ImGuiWindowFlags.NoCollapse
                                              | ImGuiWindowFlags.NoScrollbar
                                              | ImGuiWindowFlags.NoDecoration
-                                             | ImGuiWindowFlags.AlwaysAutoResize);
+                                             | ImGuiWindowFlags.AlwaysAutoResize
+            );
 
             if (ImGui.BeginTabBar("MainTabs"))
             {
                 // ================== General Tab ==================
                 if (ImGui.BeginTabItem("General"))
                 {
-                    ImGui.Text("This is the General tab");
-                    ImGui.Separator();
-
+                    foreach( var func in FunctionManager.Instance.Functions.Where(f => f.Mode.HasFlag(ActivationMode.Both) || f.Mode.HasFlag(ActivationMode.MenuOnly)))
+                    {
+                        string label = $"{(func.ExecutionType == ExecutionType.Toggleable ? (func.Enabled ? "Disable" : "Enable") : "Execute")} {func.Name} ({func.Defaultkey})";
+                        if (ImGui.Button(label))
+                        {
+                            if (func.ExecutionType == ExecutionType.RunOnce) func.Execute();
+                            if (func.ExecutionType == ExecutionType.Toggleable) func.Toggle();
+                        }
+                    }
                     ImGui.EndTabItem();
                 }
 
