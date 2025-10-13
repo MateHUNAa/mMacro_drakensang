@@ -28,14 +28,16 @@ namespace mMacro.Core.Managers
         public ExecutionType ExecutionType { get; set; } = ExecutionType.RunOnce;
 
         private bool m_enabled = false;
-        protected MacroFunction(string name, Keys defaultKey, ActivationMode mode = ActivationMode.Both, ExecutionType executionType = ExecutionType.RunOnce)
+        protected MacroFunction(string name, Keys defaultKey, ActivationMode mode = ActivationMode.MenuOnly, ExecutionType executionType = ExecutionType.RunOnce)
         {
             Name = name;
             Defaultkey = defaultKey;
             Mode = mode;
             ExecutionType = executionType;
 
-            KeybindManager.Instance.Register(Name, Defaultkey, Execute, KeyModifiers.None);
+            if (Mode.HasFlag(ActivationMode.KeybindOnly) || Mode.HasFlag(ActivationMode.Both)) {
+                KeybindManager.Instance.Register(Name, Defaultkey, OnKeyPressed, KeyModifiers.None);
+            }
             Init();
         }
         public virtual void Init()
@@ -52,7 +54,7 @@ namespace mMacro.Core.Managers
         {
             if (ExecutionType != ExecutionType.Toggleable) return;
 
-            Enabled =!Enabled;
+            Enabled = !Enabled;
             Console.WriteLine($"[{Name}] {(Enabled ? "Enabled" : "Disabled")}");
         }
         private void OnKeyPressed()

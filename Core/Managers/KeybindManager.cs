@@ -46,12 +46,6 @@ namespace mMacro.Core.Managers
                 throw new InvalidOperationException("KeybindManager already initialized !");
 
             m_config = ConfigManager.Load();
-            foreach (var kvp in m_config.Keybinds)
-            {
-                if (kvp.Value.Key != Keys.None)
-                     m_bindings[kvp.Key] = kvp.Value;
-            }
-
             m_instance = this;
             AppDomain.CurrentDomain.ProcessExit +=OnApplicationClosed;
         }
@@ -62,11 +56,27 @@ namespace mMacro.Core.Managers
         }
         public void Register(string name, Keys key, Action action, KeyModifiers modifiers = KeyModifiers.None)
         {
-            if (!m_bindings.ContainsKey(name))
+            if (m_bindings.ContainsKey(name))
             {
-                m_bindings[name] = new Keybind(key, action, modifiers);
-                Console.WriteLine($"[{name}] Keybind registered: ({key.ToString()})");
+                if (m_config.Keybinds.ContainsKey(name)) 
+                {
+                    Keybind savedBind = m_config.Keybinds[name];
+                    m_bindings[name].Key = savedBind.Key;
+                    m_bindings[name].Modifiers = savedBind.Modifiers;
+                }
+                return;
             }
+
+            m_bindings[name] = new Keybind(key, action, modifiers);
+
+            if (m_config.Keybinds.ContainsKey(name))
+            {
+                Keybind savedBind = m_config.Keybinds[name];
+                m_bindings[name].Key = savedBind.Key;
+                m_bindings[name].Modifiers = savedBind.Modifiers;
+            }
+
+            //Console.WriteLine($"[{name}] Keybind registered: ({FormatKeybind(m_bindings[name].Modifiers, m_bindings[name].Key)})");
         }
         public bool IsListening(string keybindName) => m_listeningKeybindName == keybindName;
         public void Update()
@@ -170,6 +180,18 @@ namespace mMacro.Core.Managers
 
                 SaveConfig();
             }
+        }
+        public string FormatKeybind(KeyModifiers modifiers, Keys key)
+        {
+            List<string> parts = new();
+
+            if (modifiers.HasFlag(KeyModifiers.Ctrl)) parts.Add("Ctrl");
+            if (modifiers.HasFlag(KeyModifiers.Shift)) parts.Add("Shift");
+            if (modifiers.HasFlag(KeyModifiers.Alt)) parts.Add("Alt");
+
+            parts.Add(key.ToString());
+
+            return string.Join(" + ", parts);
         }
         private bool AnyKeyDown()
         {

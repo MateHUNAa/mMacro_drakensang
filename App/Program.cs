@@ -7,18 +7,19 @@ namespace mMacro.App
     internal class Program
     {
         private static KeybindManager keybindManager;
+        private static FunctionManager functionManager;
+        private static ReviveBot reviveBot;
         static void Main()
         {
-            Console.Title = "mMacro - Drakensang Online";
+            keybindManager = new KeybindManager();
+            functionManager = new FunctionManager();
+            InventoryScan inventoryScan = InventoryScan.Instance;
+            reviveBot = new ReviveBot();
 
+
+            Console.Title = "mMacro - Drakensang Online";
             AutoClicker autoClicker = new AutoClicker();
             Renderer renderer = new Renderer();
-            keybindManager =  new KeybindManager();
-            FunctionManager functionManager = new FunctionManager();
-
-            keybindManager.Register("Left Clicker", autoClicker.Left.Keybind, autoClicker.Left.Toggle);
-            keybindManager.Register("Right Clicker", autoClicker.Right.Keybind, autoClicker.Right.Toggle);
-
             Thread renderThread = new Thread(new ThreadStart(renderer.Start().Wait));
             renderThread.Start();
 
@@ -26,7 +27,7 @@ namespace mMacro.App
 
             while (true) {
                 keybindManager.Update();
-                autoClicker.ExecuteEnabled();
+                functionManager.ExecuteEnabled();
                 Thread.Sleep(1);
             }
          
