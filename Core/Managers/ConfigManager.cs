@@ -26,7 +26,6 @@ namespace mMacro.Core.Managers
         {
             var json = JsonConvert.SerializeObject(config, Formatting.Indented);
             File.WriteAllText(ConfigPath, json);
-            Console.WriteLine("✅ Configuration saved !");
         }
     }
 }
