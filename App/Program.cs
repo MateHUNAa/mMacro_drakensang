@@ -13,13 +13,13 @@ namespace mMacro.App
         {
             keybindManager = new KeybindManager();
             functionManager = new FunctionManager();
-            InventoryScan inventoryScan = InventoryScan.Instance;
             reviveBot = new ReviveBot();
 
+            InventoryScan inventoryScan = InventoryScan.Instance;
+            AutoClicker autoClicker     = new AutoClicker();
+            Renderer renderer           = new Renderer();
 
-            Console.Title = "mMacro - Drakensang Online";
-            AutoClicker autoClicker = new AutoClicker();
-            Renderer renderer = new Renderer();
+
             Thread renderThread = new Thread(new ThreadStart(renderer.Start().Wait));
             renderThread.Start();
 

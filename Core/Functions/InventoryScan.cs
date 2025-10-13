@@ -1,13 +1,6 @@
 ﻿using mMacro.Core.Managers;
 using mMacro.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.Marshalling;
-using System.Text;
-using System.Threading.Tasks;
 using WindowsInput;
 
 
@@ -222,8 +215,8 @@ namespace mMacro.Core.Functions
         }
         public void EndDrag()
         {
-            isDragging=false;
-            EditMode=false;
+            isDragging  = false;
+            EditMode    = false;
 
             int width = (int)Math.Abs(dragEnd.X - dragStart.X) / CellSize;
             int height = (int)Math.Abs(dragEnd.Y - dragStart.Y) / CellSize;
@@ -233,7 +226,6 @@ namespace mMacro.Core.Functions
             m_config.DragEnd = dragEnd;
 
             ConfigManager.Save(m_config);
-
         }
         public void UpdateDrag(Vector2 pos)
         {

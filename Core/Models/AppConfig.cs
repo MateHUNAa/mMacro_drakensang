@@ -7,11 +7,11 @@ namespace mMacro.Core.Models
     public class AppConfig
     {
         public Dictionary<string, Keybind> Keybinds { get; set; } = new();
-        public Vector2 FirstCellPosition { get; set; } = Vector2.Zero;
-        public Vector2 FirstBagPosition {  get; set; } = Vector2.Zero;  
+        public Vector2 FirstCellPosition { get; set; } = new Vector2(1371.0f, 642.0f);
+        public Vector2 FirstBagPosition {  get; set; } = new Vector2(1345.0f, 576.0f);  
         
-        public Vector2 DragStart { get; set; } = Vector2.Zero;
-        public Vector2 DragEnd { get; set; } = Vector2.Zero;
+        public Vector2 DragStart { get; set; } = new Vector2(1327.0f, 598.0f);
+        public Vector2 DragEnd { get; set; } = new Vector2(1894.0f, 925.0f);
 
         public int BagCount { get; set; } = 9;
         public ScanType ScanType { get; set; } = ScanType.Simple;
