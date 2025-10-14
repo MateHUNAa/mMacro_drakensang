@@ -39,7 +39,7 @@ namespace mMacro.Core.Functions
             { "Purple", new ColorRange { R = (150, 156), G = (42, 44), B = (79, 82) } },
             { "Gold", new ColorRange { R = (254, 255), G = (161, 162), B = (73, 75) } },
             { "Unique", new ColorRange { R = (249, 256), G = (248, 255), B = (97, 107) } },
-            { "Set", new ColorRange { R = (91, 124), G = (205, 219), B = (232, 242) } },
+            { "Set", new ColorRange { R = (38,78), G = (188, 199), B = (223, 227) } },
             { "Color Item", new ColorRange { R = (120, 131), G = (96, 107), B = (66, 77) } }
         };
         private InputSimulator InputSimulator = new InputSimulator();

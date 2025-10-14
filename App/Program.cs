@@ -30,7 +30,6 @@ namespace mMacro.App
                 functionManager.ExecuteEnabled();
                 Thread.Sleep(1);
             }
-         
         }
     }
 }

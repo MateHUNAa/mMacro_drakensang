@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,10 +32,11 @@ namespace mMacro.App
         private EditMode m_editmode = EditMode.None;
         public bool isVisible { get; set; } = true;
 
-
+        private int delay = 1;
         protected override Task PostInitialized()
         {
             m_config = ConfigManager.Load();
+            delay = m_config.ClickDelay;
             KeybindManager.Instance.Register("Toggle Panel", Keys.Insert, () => isVisible =!isVisible);
             return base.PostInitialized();
         }
@@ -94,6 +96,8 @@ namespace mMacro.App
             );
 
             if (!inventoryScan.EditMode)
+            {
+                if (ImGui.Button("Exit")) Application.Exit();
                 if (ImGui.BeginTabBar("MainTabs"))
                 {
                     // ================== General Tab ==================
@@ -107,6 +111,11 @@ namespace mMacro.App
                                 if (func.ExecutionType == ExecutionType.RunOnce) func.Execute();
                                 if (func.ExecutionType == ExecutionType.Toggleable) func.Toggle();
                             }
+                        }
+                        ImGui.Separator();
+                        if (ImGui.InputInt("Clicker Delay(ms)", ref delay, 1, 10000))
+                        {
+                            AutoClicker.Instance.SetDelay(delay);
                         }
                         ImGui.EndTabItem();
                     }
@@ -145,6 +154,7 @@ namespace mMacro.App
 
                     ImGui.EndTabBar();
                 }
+            }
 
 
             if (inventoryScan.DebugMode)
