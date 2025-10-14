@@ -2,25 +2,11 @@
 using mMacro.Core.Models;
 using System.Numerics;
 using WindowsInput;
+using static mMacro.Core.Utils.PixelUtils;
 
 
 namespace mMacro.Core.Functions
 {
-
-    public struct ColorRange
-    {
-        public (int Min, int Max) R;
-        public (int Min, int Max) G;
-        public (int Min, int Max) B;
-
-        public bool IsInRange(System.Drawing.Color color)
-        {
-            return color.R >= R.Min-1 && color.R <= R.Max+1 &&
-                   color.G >= G.Min-1 && color.G <= G.Max+1 &&
-                   color.B >= B.Min-1 && color.B <= B.Max+1;
-        }
-    }
-
     [Flags]
     public enum ScanType
     {
@@ -32,6 +18,7 @@ namespace mMacro.Core.Functions
     {
         #region Constants
         private static readonly Lazy<InventoryScan> m_instance = new Lazy<InventoryScan>(() => new InventoryScan());
+        public static InventoryScan Instance => m_instance.Value;
         private AppConfig m_config;
         public Dictionary<string, ColorRange> ColorRanges { get; set; } = new()
         {
@@ -44,7 +31,6 @@ namespace mMacro.Core.Functions
         };
         private InputSimulator InputSimulator = new InputSimulator();
 
-        public static InventoryScan Instance => m_instance.Value;
 
         public int BagCount = 9;
         public readonly int CellSize    = 76;
@@ -130,7 +116,7 @@ namespace mMacro.Core.Functions
 
                     var color = GetPixelColor((int)cellX, (int)cellY);
                     Console.WriteLine($"({col+1}x{row+1})Color: {color}");
-                    if (CheckPixel(color))
+                    if (CheckPixel(color, ColorRanges))
                     {
                         Cursor.Position = new Point((int)cellX, ((int)cellY));
                         InputSimulator.Mouse.RightButtonClick();
@@ -159,7 +145,7 @@ namespace mMacro.Core.Functions
                         float cellY = firstCellPos.Y + CellSize * col + GetOffset(col);
                         Console.WriteLine($"Bag {bag + 1}, Thread {t + 1}, Cell ({col + 1}x{row + 1})");
 
-                        if (CheckPixel(GetPixelColor((int)cellX, (int)cellY)))
+                        if (CheckPixel(GetPixelColor((int)cellX, (int)cellY), ColorRanges))
                         {
                             Cursor.Position = new Point((int)cellX, (int)cellY);
                             InputSimulator.Mouse.RightButtonClick();
@@ -179,17 +165,6 @@ namespace mMacro.Core.Functions
             if (val==4) return 18;
 
             return 18+ (val-4)*5;
-        }
-        private bool CheckPixel(Color pixel)
-        {
-            return ColorRanges.Values.Any(c => c.IsInRange(pixel));
-        }
-        private Color GetPixelColor(int x, int y)
-        {
-            using var bmp = new Bitmap(1, 1);
-            using var g = Graphics.FromImage(bmp);
-            g.CopyFromScreen(x, y, 0, 0, new Size(1, 1));
-            return bmp.GetPixel(0, 0);
         }
         public void SetFirstCell(Vector2 pos)
         {

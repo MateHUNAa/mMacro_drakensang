@@ -8,14 +8,15 @@ namespace mMacro.App
     {
         private static KeybindManager keybindManager;
         private static FunctionManager functionManager;
-        private static ReviveBot reviveBot;
         static void Main()
         {
             keybindManager = new KeybindManager();
             functionManager = new FunctionManager();
-            reviveBot = new ReviveBot();
 
             InventoryScan inventoryScan = InventoryScan.Instance;
+            SwapCape swapCape = SwapCape.Instance;
+            ReviveBot revivebot = ReviveBot.Instance;
+            AutoPotion autoPotion = AutoPotion.Instance;
             AutoClicker autoClicker     = new AutoClicker();
             Renderer renderer           = new Renderer();
 
