@@ -34,7 +34,7 @@ namespace mMacro.Core.Functions.Inventory
         private InputSimulator InputSimulator = new InputSimulator();
 
 
-        public int BagCount = 9;
+        public int BagCount             = 9;
         public readonly int CellSize    = 76;
         public readonly int BagSize     = 40;
         public readonly int BagOffsetX  = 49;
