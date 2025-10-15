@@ -25,15 +25,15 @@ namespace mMacro.App
             public Action<Vector2> OnSet { get; set; } = null;
         }
 
-        public Vector2 screenSize = new Vector2(screenWidth, screenHeight);
         private Sellbot inventoryScan = Sellbot.Instance;
-        private SwapCape swapCape = SwapCape.Instance;
+        public Vector2 screenSize   = new Vector2(screenWidth, screenHeight);
+        private SwapCape swapCape   = SwapCape.Instance;
         private ReviveBot reviveBot = ReviveBot.Instance;
-        private Meltbot meltBot = Meltbot.Instance;
+        private Meltbot meltBot     = Meltbot.Instance;
         private AppConfig m_config;
-        private Vector4 ColorRed = new Vector4(1, 0, 0, 1);
-        private bool DebugMode = true;
-        private bool editMode = false;
+        private Vector4 ColorRed    = new Vector4(1, 0, 0, 1);
+        private bool DebugMode      = false;
+        private bool editMode       = false;
         private EditSession editSession = new EditSession();
         private enum EditMode
         {
@@ -44,7 +44,6 @@ namespace mMacro.App
             Player,
             MeltBot
         }
-        private EditMode m_editmode = EditMode.None;
         public bool isVisible { get; set; } = true;
         private int delay = 1;
         protected override Task PostInitialized()
@@ -54,6 +53,8 @@ namespace mMacro.App
             KeybindManager.Instance.Register("Toggle Panel", Keys.Insert, () => isVisible =!isVisible);
             return base.PostInitialized();
         }
+
+        /// <inheritdoc/>
         protected override void Render()
         {
             if (!isVisible) return;
@@ -77,6 +78,8 @@ namespace mMacro.App
             ImGui.Begin("mMacro - Drakensang", ImGuiWindowFlags.NoBringToFrontOnFocus
                                              //| ImGuiWindowFlags.AlwaysAutoResize
             );
+
+            ImGuiStylePtr style = ImGui.GetStyle();
 
             if (!editMode)
             {
@@ -162,6 +165,17 @@ namespace mMacro.App
                             ImGui.EndTabBar();
 
                         }
+                        ImGui.EndTabItem();
+                    }
+
+                    if(ImGui.BeginTabItem("Settings"))
+                    {
+
+                        ImGui.EndTabItem();
+                    }
+                    if(ImGui.BeginTabItem("Menu Style"))
+                    {
+                        ImGui.ShowStyleEditor();
                         ImGui.EndTabItem();
                     }
                     ImGui.EndTabBar();
@@ -325,7 +339,7 @@ namespace mMacro.App
                         (item.B.Item1 + item.B.Item2) / 2f / 255f
                     );
 
-                    if (ImGui.ColorEdit3(name, ref avgColor))
+                    if (ImGui.ColorEdit3(name, ref avgColor, ImGuiColorEditFlags.NoInputs))
                     {
                         // Update max values only
                         item.R = (item.R.Item1, Math.Clamp((int)(avgColor.X * 255f), 0, 255));
