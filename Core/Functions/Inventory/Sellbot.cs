@@ -122,6 +122,26 @@ namespace mMacro.Core.Functions.Inventory
             }
         }
 
+        public async void ScanBagOnce(Func<Vector2, Task> OnFound, Dictionary<string, ColorRange> cRanges)
+        {
+            for (int col = 0; col<4; col++)
+            {
+                for (int row = 0; row<7; row++)
+                {
+                    float cellX = firstCellPos.X + CellSize * row + GetOffset(row);
+                    float cellY = firstCellPos.Y + CellSize * col + GetOffset(col);
+
+                    var color = GetPixelColor((int)cellX, (int)cellY);
+                    Console.WriteLine($"({col+1}x{row+1}) {color}");
+                    if (CheckPixel(color, cRanges))
+                    {
+                        await OnFound(new Vector2(cellX, cellY));
+                    }
+                }
+            }
+        }
+        public void ScanBagOnce(Action<Vector2> OnFound, ColorRange cRanges) => ScanBagOnce(OnFound, cRanges);
+
         public List<Vector2> ScanBag(int bag=0)
         {
             List<Vector2> foundItems = new();

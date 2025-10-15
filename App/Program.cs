@@ -19,6 +19,7 @@ namespace mMacro.App
             ReviveBot revivebot     = ReviveBot.Instance;
             AutoPotion autoPotion   = AutoPotion.Instance;
             Meltbot meltBot         = Meltbot.Instance;
+            Meltgem metlGem         = Meltgem.Instance;
             AutoClicker autoClicker     = new AutoClicker();
             Renderer renderer           = new Renderer();
 

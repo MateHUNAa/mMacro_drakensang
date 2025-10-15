@@ -63,6 +63,8 @@ namespace mMacro.Core.Utils
                     sim.Mouse.RightButtonDoubleClick();
                     break;
             }
+
+            await Task.Delay(delayMs);
                     
         }
         public static async Task ClickAtAsync(Point pos, int delayMs = 50 ,ClickType type = ClickType.LEFT) =>
