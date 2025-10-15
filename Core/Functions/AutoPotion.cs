@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace mMacro.Core.Functions
 {
-    public class AutoPotion : MacroFunction
+    public class AutoPotion : SingletonMacroFunction<AutoPotion>
     {
-        private static readonly Lazy<AutoPotion> m_instance = new Lazy<AutoPotion>(() => new AutoPotion());
-        public static AutoPotion Instance => m_instance.Value;
         public AutoPotion() : base("Auto Potion", Keys.None, ActivationMode.MenuOnly, ExecutionType.Toggleable)
         {
         }

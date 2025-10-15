@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace mMacro.Core.Managers
@@ -14,12 +10,15 @@ namespace mMacro.Core.Managers
         MenuOnly,
         Both
     }
+
     [Flags]
     public enum ExecutionType
     {
         Toggleable, // Stays active until toggled off
-        RunOnce // executes once per trigger
+        RunOnce // Executes once per trigger
     }
+
+    // Base class without singleton
     public abstract class MacroFunction
     {
         public string Name { get; }
@@ -28,6 +27,7 @@ namespace mMacro.Core.Managers
         public ExecutionType ExecutionType { get; set; } = ExecutionType.RunOnce;
 
         private bool m_enabled = false;
+
         protected MacroFunction(string name, Keys defaultKey, ActivationMode mode = ActivationMode.MenuOnly, ExecutionType executionType = ExecutionType.RunOnce)
         {
             Name = name;
@@ -36,23 +36,25 @@ namespace mMacro.Core.Managers
             ExecutionType = executionType;
 
             if ((Mode.HasFlag(ActivationMode.KeybindOnly) || Mode.HasFlag(ActivationMode.Both))
-            &&  !Mode.HasFlag(ActivationMode.MenuOnly))
+                && !Mode.HasFlag(ActivationMode.MenuOnly))
             {
                 KeybindManager.Instance.Register(Name, Defaultkey, OnKeyPressed, KeyModifiers.None);
             }
 
             Init();
         }
+
         public virtual void Init()
         {
             FunctionManager.Instance.Register(this);
         }
+
         public bool Enabled
         {
             get => m_enabled;
             private set => m_enabled = value;
         }
-        
+
         public void Toggle()
         {
             if (ExecutionType != ExecutionType.Toggleable) return;
@@ -60,15 +62,33 @@ namespace mMacro.Core.Managers
             Enabled = !Enabled;
             Console.WriteLine($"[{Name}] {(Enabled ? "Enabled" : "Disabled")}");
         }
+
         private void OnKeyPressed()
         {
             if (ExecutionType == ExecutionType.Toggleable) Toggle();
             if (ExecutionType == ExecutionType.RunOnce) Execute();
         }
+
         public void ExecuteIfEnabled()
         {
-            if(ExecutionType == ExecutionType.Toggleable && Enabled) Execute(); 
+            if (ExecutionType == ExecutionType.Toggleable && Enabled) Execute();
         }
+
         public abstract void Execute();
+    }
+
+    // Optional singleton wrapper
+    public abstract class SingletonMacroFunction<T> : MacroFunction
+        where T : SingletonMacroFunction<T>, new()
+    {
+        private static readonly Lazy<T> m_instance = new Lazy<T>(() => new T());
+        public static T Instance => m_instance.Value;
+
+        protected SingletonMacroFunction(string name = "", Keys defaultKey = Keys.None,
+            ActivationMode mode = ActivationMode.MenuOnly,
+            ExecutionType executionType = ExecutionType.RunOnce)
+            : base(name, defaultKey, mode, executionType)
+        {
+        }
     }
 }

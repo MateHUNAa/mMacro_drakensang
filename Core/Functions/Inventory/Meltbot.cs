@@ -2,16 +2,13 @@
 using mMacro.Core.Models;
 using mMacro.Core.Utils;
 using System.Numerics;
-using System.Resources;
-using WindowsInput;
 using static mMacro.Core.Utils.Click;
 
 
 namespace mMacro.Core.Functions.Inventory
 {
-    public class Meltbot : MacroFunction
+    public class Meltbot : SingletonMacroFunction<Meltbot>
     {
-        private static readonly Lazy<Meltbot> m_instance = new Lazy<Meltbot>(() => new Meltbot());
         public readonly int CellSize = 75;
         public readonly Vector2 MeltButtonSize = new Vector2(180, 40);
         public Vector2 MeltCloseBtn = Vector2.Zero;
@@ -33,8 +30,6 @@ namespace mMacro.Core.Functions.Inventory
             MeltButtonPos = m_config.MeltButtonPos;
             MeltCloseBtn = m_config.MeltCloseBtn;
         }
-
-        public static Meltbot Instance => m_instance.Value;
 
         private bool IsMeltMenuOpen()
         {

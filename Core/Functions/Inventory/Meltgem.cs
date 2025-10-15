@@ -2,11 +2,11 @@
 
 namespace mMacro.Core.Functions.Inventory
 {
-    public class Meltgem : MacroFunction
+    public class Meltgem : SingletonMacroFunction<Meltgem>
     {
-        public Meltgem() : base("Melt Gem", Keys.None, ActivationMode.Both, ExecutionType.Toggleable)
-        {
-        }
+        public Meltgem() : base("Melt Gem", Keys.None, ActivationMode.Both, ExecutionType.Toggleable) { }
+
+
 
         public override void Execute()
         {

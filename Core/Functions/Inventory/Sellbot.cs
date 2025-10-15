@@ -16,11 +16,9 @@ namespace mMacro.Core.Functions.Inventory
         Slow,
         Expensive
     }
-    public class Sellbot : MacroFunction
+    public class Sellbot : SingletonMacroFunction<Sellbot>
     {
         #region Constants
-        private static readonly Lazy<Sellbot> m_instance = new Lazy<Sellbot>(() => new Sellbot());
-        public static Sellbot Instance => m_instance.Value;
         private AppConfig m_config;
         public Dictionary<string, ColorRange> ColorRanges { get; set; } = new()
         {

@@ -10,10 +10,8 @@ using WindowsInput;
 using static mMacro.Core.Utils.PixelUtils;
 namespace mMacro.Core.Functions
 {
-    public class ReviveBot : MacroFunction
+    public class ReviveBot : SingletonMacroFunction<ReviveBot>
     {
-        private static readonly Lazy<ReviveBot> m_instance = new Lazy<ReviveBot>(() => new ReviveBot());
-        public static ReviveBot Instance = m_instance.Value;
         private AppConfig m_config;
         private InputSimulator m_sim = new InputSimulator();
         private List<bool> m_reviveOffered = new List<bool> { false, false, false, false, false};

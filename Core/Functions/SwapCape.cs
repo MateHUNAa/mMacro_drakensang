@@ -14,12 +14,9 @@ using System.Runtime.InteropServices.Marshalling;
 
 namespace mMacro.Core.Functions
 {
-    public class SwapCape : MacroFunction
+    public class SwapCape : SingletonMacroFunction<SwapCape>
     {
         #region Variables
-        private static readonly Lazy<SwapCape> m_instance = new Lazy<SwapCape>(() => new SwapCape());
-        public static SwapCape Instance = m_instance.Value;
-
         private Color ExitButtonColor = Color.FromArgb(255, 255, 255 ,255);
         private InputSimulator m_sim = new InputSimulator();
         public Vector2 InventoryCloseButtonPosition = Vector2.Zero;
