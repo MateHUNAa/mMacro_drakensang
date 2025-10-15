@@ -1,17 +1,11 @@
 ﻿using mMacro.Core.Managers;
 using mMacro.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using mMacro.Core.Utils;
-using static mMacro.Core.Utils.PixelUtils;
+using System.Numerics;
 using WindowsInput;
 using WindowsInput.Native;
-using System.Runtime.InteropServices.Marshalling;
 using static mMacro.Core.Utils.Click;
+using static mMacro.Core.Utils.PixelUtils;
 
 namespace mMacro.Core.Functions
 {
