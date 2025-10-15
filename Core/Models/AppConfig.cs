@@ -42,5 +42,9 @@ namespace mMacro.Core.Models
         public Vector2 MeltFirstPos { get; set; } = Vector2.Zero;
         public Vector2 MeltButtonPos { get; set; } = Vector2.Zero;
         public Vector2 MeltCloseBtn { get; set; } = Vector2.Zero;
+
+        // ================== MeltGem ==================
+        public UIPositions.CraftPositions CraftPositions { get; set; } = new UIPositions.CraftPositions();
+
     }
 }

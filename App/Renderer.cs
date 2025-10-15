@@ -227,13 +227,13 @@ namespace mMacro.App
                 { 
                     for (int row =0;row<7;row++)
                     {
-                        DrawCursorSquare(new Vector2(firstCell.X + cellSize * row + inventoryScan.GetOffset(row), firstCell.Y + cellSize * col + inventoryScan.GetOffset(col)), cellSize, ColorRed);
+                        DrawCursorSquare(new Vector2(firstCell.X + cellSize * row + inventoryScan.GetOffset(row), firstCell.Y + cellSize * col + inventoryScan.GetOffset(col)), cellSize, new Vector4(0.2f, 0.5f, 1, 1));
                     }
                 }
 
                 for (int i = 0; i<inventoryScan.BagCount; i++) 
                 {
-                    DrawCursorSquare(new Vector2(inventoryScan.firstBagPos.X +inventoryScan.BagOffsetX * (i), inventoryScan.firstBagPos.Y), inventoryScan.BagSize, new Vector4(0, 0, 1, 1));
+                    DrawCursorSquare(new Vector2(inventoryScan.firstBagPos.X +inventoryScan.BagOffsetX * (i), inventoryScan.firstBagPos.Y), inventoryScan.BagSize, new Vector4(0.4f, 0.4f, 1, 1));
                 }
 
                 // Player Section
@@ -256,8 +256,18 @@ namespace mMacro.App
                     }
                 }
 
-                DrawCursorSquare(meltBot.MeltButtonPos, meltBot.MeltButtonSize, ColorRed);
-                DrawCursorSquare(meltBot.MeltCloseBtn, 30, ColorRed);
+                DrawCursorSquare(meltBot.MeltButtonPos, meltBot.MeltButtonSize, new Vector4(0.2f, 0.5f, 1, 1));
+                DrawCursorSquare(meltBot.MeltCloseBtn, 30, new Vector4(0.2f, 0.5f, 1, 1));
+
+                // Melt Gem
+
+                {
+                    DrawCursorSquare(m_config.CraftPositions.MaxBtnPosition, new Vector2(35, 15), Color.FromArgb(255, 0, 255, 0));
+                    DrawCursorSquare(m_config.CraftPositions.PotionPosition, new Vector2(100, 55), Color.FromArgb(255, 0, 255, 0));
+                    DrawCursorSquare(m_config.CraftPositions.CombinePosition, new Vector2(180, 45), Color.FromArgb(255, 0, 255, 0));
+                    DrawCursorSquare(m_config.CraftPositions.MinusBtnPosition, 18, Color.FromArgb(255, 0, 255, 0));
+                    DrawCursorSquare(m_config.CraftPositions.ClosePosition, 25, Color.FromArgb(255, 0, 255, 0));
+                }
             }
 
             ImGui.End();
@@ -282,6 +292,9 @@ namespace mMacro.App
                              ImGui.ColorConvertFloat4ToU32(Color)
             );
         }
+        public void DrawCursorSquare(Vector2 pos, Vector2 CellSize, Color color) => DrawCursorSquare(pos, CellSize, new Vector4(color.R, color.G, color.B, color.A));
+        public void DrawCursorSquare(Vector2 pos, int CellSize, Color color) => DrawCursorSquare(pos, CellSize, new Vector4(color.R, color.G, color.B, color.A));
+
         public void DrawDragRect(Vector2 start, Vector2 end)
         {
             var drawList = ImGui.GetForegroundDrawList();
@@ -607,7 +620,8 @@ namespace mMacro.App
                     {
                         StartEditSession(editSession, (pos) =>
                         {
-
+                            Meltgem.Instance.Positions.PotionPosition = pos;
+                            m_config.CraftPositions.PotionPosition = pos;
                         }, EditMode.FirstCell, Color.FromArgb(255,255,0,0),new Vector2(100, 55));
                     }
                     if (ImGui.IsItemHovered())
@@ -617,7 +631,8 @@ namespace mMacro.App
                     {
                         StartEditSession(editSession, (pos) =>
                         {
-
+                            Meltgem.Instance.Positions.MaxBtnPosition = pos;
+                            m_config.CraftPositions.MaxBtnPosition = pos;
                         }, EditMode.FirstCell, Color.FromArgb(255, 255, 0, 0), new Vector2(35, 15));
                        
                     }
@@ -628,7 +643,8 @@ namespace mMacro.App
                     {
                         StartEditSession(editSession, (pos) =>
                         {
-
+                            Meltgem.Instance.Positions.MinusBtnPosition = pos;
+                            m_config.CraftPositions.MinusBtnPosition = pos;
                         }, EditMode.FirstCell, Color.FromArgb(255, 255, 0, 0), 18);
                     }
                     if (ImGui.IsItemHovered())
@@ -638,11 +654,22 @@ namespace mMacro.App
                     {
                         StartEditSession(editSession, (pos) =>
                         {
-
+                            Meltgem.Instance.Positions.ClosePosition = pos;
+                            m_config.CraftPositions.ClosePosition = pos;
                         }, EditMode.FirstCell, Color.FromArgb(255, 0, 255, 0), 25);
                     }
                     if (ImGui.IsItemHovered())
                         ImGui.SetTooltip("Select the Exit Cross in the workbench");
+                    if (ImGui.Button("Combine Button", new Vector2(ImGui.GetContentRegionAvail().X, 0)))
+                    {
+                        StartEditSession(editSession, (pos) =>
+                        {
+                            Meltgem.Instance.Positions.CombinePosition = pos;
+                            m_config.CraftPositions.CombinePosition = pos;
+                        }, EditMode.FirstCell, Color.FromArgb(255, 0, 255, 0), new Vector2(180, 45));
+                    }
+                    if (ImGui.IsItemHovered())
+                        ImGui.SetTooltip("Select the 'Combine' button in the workbench");
 
                 }
 
