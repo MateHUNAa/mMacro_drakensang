@@ -414,8 +414,9 @@ namespace mMacro.App
         {
             if (ImGui.BeginTabItem("SwapCape"))
             {
-                ImGui.Text("SwapCape");
-                if (ImGui.Button($"{("Set Close Button")}"))
+                ImGui.SeparatorText("Setup");
+                Vector2 buttonSize = new Vector2(ImGui.GetContentRegionAvail().X, 0);
+                if (ImGui.Button("Set Close Button", buttonSize))
                 {
                     editSession.Mode = EditMode.SetClose;
                     editSession.Size = new Vector2(swapCape.CloseButtonScale, swapCape.CloseButtonScale);
@@ -426,27 +427,39 @@ namespace mMacro.App
                     };
                     editSession.Active=true;
                 }
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip("Click to save the in-game close button position.");
 
-                ImGui.Text("Inventory Settings:");
-                if (ImGui.SliderInt("Bag", ref swapCape.bag, 0, 8))
+                ImGui.SeparatorText("Inventory Settings");
                 {
-                    m_config.swapBag = swapCape.bag;
-                    ConfigManager.Save(m_config);
-                }
-                if(ImGui.SliderInt("Colums", ref swapCape.col, 0, 3))
-                {
-                    m_config.swapCol = swapCape.col;
-                    ConfigManager.Save(m_config);
-                }
-                if (ImGui.SliderInt("Rows", ref swapCape.row, 0, 6))
-                {
-                    m_config.swapRow = swapCape.row;
-                    ConfigManager.Save(m_config);
+                    if (ImGui.SliderInt("Bag", ref swapCape.bag, 0, 8))
+                    {
+                        m_config.swapBag = swapCape.bag;
+                        ConfigManager.Save(m_config);
+                    }
+                    if (ImGui.IsItemHovered())
+                        ImGui.SetTooltip("The bag where the cape is located.");
+
+                    if (ImGui.SliderInt("Columns", ref swapCape.col, 0, 3))
+                    {
+                        m_config.swapCol = swapCape.col;
+                        ConfigManager.Save(m_config);
+                    }
+                    if (ImGui.IsItemHovered())
+                        ImGui.SetTooltip("The column where the cape is located.");
+
+                    if (ImGui.SliderInt("Rows", ref swapCape.row, 0, 6))
+                    {
+                        m_config.swapRow = swapCape.row;
+                        ConfigManager.Save(m_config);
+                    }
+                    if (ImGui.IsItemHovered())
+                        ImGui.SetTooltip("The row where the cape is located.");
                 }
 
-                ImGui.Separator();
 
-                ImGui.Text("Keybinds");
+                ImGui.SeparatorText("Keybinds");
+
                 ImGui.TextColored(ColorRed, "NOT WORKING !");
                 RenderKeyBinding("Open Inventory", ref swapCape.OpenInventory);
                 RenderKeyBinding("Ride Mount", ref swapCape.RideMount);
@@ -491,9 +504,9 @@ namespace mMacro.App
         {
             if(ImGui.BeginTabItem("Revive Bot"))
             {
-                ImGui.Text("Initialize");
-                ImGui.SameLine();
-                if(ImGui.Button("Save pos"))
+                ImGui.SeparatorText("Setup");
+
+                if(ImGui.Button("Save pos", new Vector2(ImGui.GetContentRegionAvail().X, 0)))
                 {
                     editSession.Mode= EditMode.Player;
                     editSession.Radius = reviveBot.Radius;
@@ -505,7 +518,9 @@ namespace mMacro.App
                     editSession.Active = true;
                 }
 
-                ImGui.Separator();
+                ImGui.SeparatorText("Block Offers");
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip("Prevents automatically sending revive offers to the selected player.");
 
                 for (int i=0;i<5;i++)
                 {
@@ -577,7 +592,7 @@ namespace mMacro.App
         }
         #endregion
 
-        #region MeltGem
+        #region DrawMeltGem
         private void DrawMeltGems()
         {
             if(ImGui.BeginTabItem("Melt Gems"))
