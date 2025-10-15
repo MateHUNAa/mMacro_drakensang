@@ -17,7 +17,7 @@ namespace mMacro.Core.Functions
 
         public override void Execute()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("This feature is not completed yet!");
         }
     }
 }
