@@ -1,4 +1,5 @@
 ﻿using mMacro.Core.Functions;
+using mMacro.Core.Functions.Inventory;
 using mMacro.Core.Managers;
 using System.Numerics;
 
@@ -13,10 +14,11 @@ namespace mMacro.App
             keybindManager = new KeybindManager();
             functionManager = new FunctionManager();
 
-            InventoryScan inventoryScan = InventoryScan.Instance;
-            SwapCape swapCape = SwapCape.Instance;
-            ReviveBot revivebot = ReviveBot.Instance;
-            AutoPotion autoPotion = AutoPotion.Instance;
+            Sellbot inventoryScan   = Sellbot.Instance;
+            SwapCape swapCape       = SwapCape.Instance;
+            ReviveBot revivebot     = ReviveBot.Instance;
+            AutoPotion autoPotion   = AutoPotion.Instance;
+            Meltbot meltBot         = Meltbot.Instance;
             AutoClicker autoClicker     = new AutoClicker();
             Renderer renderer           = new Renderer();
 
