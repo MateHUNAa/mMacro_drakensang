@@ -140,8 +140,8 @@ namespace mMacro.Core.Functions.Inventory
                 }
             }
         }
-        public void ScanBagOnce(Action<Vector2> OnFound, ColorRange cRanges) => ScanBagOnce(OnFound, cRanges);
 
+        public void ScanBagOnce(Action<Vector2> OnFound, ColorRange cRanges) => ScanBagOnce(OnFound, cRanges);
         public List<Vector2> ScanBag(int bag=0)
         {
             List<Vector2> foundItems = new();

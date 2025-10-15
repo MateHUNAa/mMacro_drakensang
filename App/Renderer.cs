@@ -5,6 +5,7 @@ using mMacro.Core.Functions.Inventory;
 using mMacro.Core.Managers;
 using mMacro.Core.Models;
 using mMacro.Core.Utils;
+using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -92,9 +93,19 @@ namespace mMacro.App
                 if (ImGui.BeginTabItem("General"))
                 {
                     int i = 0;
-                    Vector2 size = new Vector2(ImGui.GetContentRegionAvail().X/2-10, 0);
-                    foreach (var func in FunctionManager.Instance.Functions.Where(f => f.Mode.HasFlag(ActivationMode.Both) || f.Mode.HasFlag(ActivationMode.MenuOnly)))
+                    float halfWidth = ImGui.GetContentRegionAvail().X/2 - 10;
+
+                    var functions = FunctionManager.Instance.Functions
+                        .Where(f => f.Mode.HasFlag(ActivationMode.Both) || f.Mode.HasFlag(ActivationMode.MenuOnly))
+                        .ToList();
+
+                    int count = functions.Count;
+                    foreach (var func in functions)
                     {
+                        bool isLast = (i == count -1);
+                        bool isOddCount = (count % 2 != 0);
+
+                        Vector2 size = new Vector2((isLast && isOddCount) ? ImGui.GetContentRegionAvail().X : halfWidth, 0);
 
                         string label = $"{(func.ExecutionType == ExecutionType.Toggleable ? (func.Enabled ? "Disable" : "Enable") : "Execute")} {func.Name} ({func.Defaultkey})";
                         if (ImGui.Button(label, size))
@@ -102,15 +113,17 @@ namespace mMacro.App
                             if (func.ExecutionType == ExecutionType.RunOnce) func.Execute();
                             if (func.ExecutionType == ExecutionType.Toggleable) func.Toggle();
                         }
-                        if (i%2==0) ImGui.SameLine();
+
+                        if (i % 2 == 0 && !(isLast && isOddCount))
+                            ImGui.SameLine();
+
                         i++;
                     }
-                    ImGui.Separator();
+                    ImGui.SeparatorText("Auto Clicker");
                     if (ImGui.InputInt("Clicker Delay(ms)", ref delay, 1, 10000))
                     {
                         AutoClicker.Instance.SetDelay(delay);
                     }
-                    ImGui.Checkbox("Debug Mode", ref DebugMode);
 
                     ImGui.EndTabItem();
                 }
@@ -174,7 +187,7 @@ namespace mMacro.App
 
                 if (ImGui.BeginTabItem("Settings"))
                 {
-
+                    ImGui.Checkbox("Debug Mode", ref DebugMode);
                     ImGui.EndTabItem();
                 }
 
@@ -201,8 +214,27 @@ namespace mMacro.App
                                 ImGui.SetClipboardText(codeSnippet);
                             }, EditMode.FirstCell, Color.FromArgb(1, 1, 0, 1), inventoryScan.CellSize);
                         }
-                        ImGui.SameLine();
-                        ImGui.Text("Get Item Color");
+
+                        if (ImGui.Button("Get Colors"))
+                        {
+                            Sellbot instance = Sellbot.Instance;
+                            string txt = "";
+                            for (int col = 0; col<4; col++)
+                            {
+                                for (int row = 0; row<7; row++)
+                                {
+                                    
+                                    float cellX = instance.firstCellPos.X + instance.CellSize * row + instance.GetOffset(row);
+                                    float cellY = instance.firstCellPos.Y + instance.CellSize * col + instance.GetOffset(col);
+
+                                    DrawCursorSquare(new Vector2(cellX, cellY), instance.CellSize, Color.FromArgb(255,0,0,255));
+                                    var color = PixelUtils.GetPixelColor((int)cellX, (int)cellY);
+                                    txt = txt + "\n" + '{' +$"\"{col}x{row}\",new ColorRange {{ R = ({color.R - 5}, {color.R + 5}), G = ({color.G - 5}, {color.G + 5}), B = ({color.B - 5}, {color.B + 5})," + "}},";
+                                    Task.Delay(50);
+                                }
+                            }
+                            ImGui.SetClipboardText(txt);
+                        }
 
                         ImGui.Checkbox("Debug Draw", ref DebugDraw);
 
