@@ -26,7 +26,7 @@ namespace mMacro.Core.Functions.Inventory
         };
 
         private AppConfig m_config;
-        public Meltbot() : base("Melt Bot", Keys.None, ActivationMode.MenuOnly, ExecutionType.RunOnce)
+        public Meltbot() : base("Melt Items", Keys.None, ActivationMode.Both, ExecutionType.RunOnce)
         {
             m_config = ConfigManager.Load();
             MeltFirstPos = m_config.MeltFirstPos;
