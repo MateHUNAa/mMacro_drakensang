@@ -35,9 +35,12 @@ namespace mMacro.Core.Managers
             Mode = mode;
             ExecutionType = executionType;
 
-            if (Mode.HasFlag(ActivationMode.KeybindOnly) || Mode.HasFlag(ActivationMode.Both)) {
+            if ((Mode.HasFlag(ActivationMode.KeybindOnly) || Mode.HasFlag(ActivationMode.Both))
+            &&  !Mode.HasFlag(ActivationMode.MenuOnly))
+            {
                 KeybindManager.Instance.Register(Name, Defaultkey, OnKeyPressed, KeyModifiers.None);
             }
+
             Init();
         }
         public virtual void Init()

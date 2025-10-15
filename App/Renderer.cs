@@ -1,46 +1,51 @@
-﻿using Accessibility;
-using ClickableTransparentOverlay;
-using ClickableTransparentOverlay.Win32;
+﻿using ClickableTransparentOverlay;
 using ImGuiNET;
 using mMacro.Core.Functions;
+using mMacro.Core.Functions.Inventory;
 using mMacro.Core.Managers;
 using mMacro.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+using mMacro.Core.Utils;
 using System.Numerics;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
-using Vortice.Direct3D11;
 using WindowsInput.Native;
 
 namespace mMacro.App
 {
+
     public class Renderer(int screenWidth = 1920, int screenHeight = 1080) : Overlay(windowWidth: screenWidth, windowHeight: screenHeight)
     {
+
+        private class EditSession
+        {
+            public bool Active { get; set; } = false;
+            public EditMode Mode { get; set; } = EditMode.None;
+            public Vector2 Size { get; set; } = new Vector2(10,10);
+            public float Radius { get; set; } = 10;
+            public Action<Vector2> OnSet { get; set; } = null;
+        }
+
         public Vector2 screenSize = new Vector2(screenWidth, screenHeight);
-        private InventoryScan inventoryScan = InventoryScan.Instance;
+        private Sellbot inventoryScan = Sellbot.Instance;
         private SwapCape swapCape = SwapCape.Instance;
         private ReviveBot reviveBot = ReviveBot.Instance;
+        private Meltbot meltBot = Meltbot.Instance;
         private AppConfig m_config;
         private Vector4 ColorRed = new Vector4(1, 0, 0, 1);
         private bool DebugMode = true;
         private bool editMode = false;
+        private EditSession editSession = new EditSession();
         private enum EditMode
         {
             None,
-            Drag,
             FirstCell,
             Bag,
             SetClose,
-            Player
+            Player,
+            MeltBot
         }
         private EditMode m_editmode = EditMode.None;
         public bool isVisible { get; set; } = true;
-
         private int delay = 1;
         protected override Task PostInitialized()
         {
@@ -54,105 +59,45 @@ namespace mMacro.App
             if (!isVisible) return;
             var io = ImGui.GetIO();
             var mousePos = io.MousePos;
-
+            HandleEditSession(mousePos);
+            
             #region EditMode
-            if (editMode)
+            if (editSession.Active)
             {
                 ImGui.SetNextWindowPos(Vector2.Zero);
                 ImGui.SetNextWindowSize(screenSize);
                 ImGui.Begin("EditMode Overlay", ImGuiWindowFlags.NoTitleBar
                                               | ImGuiWindowFlags.NoBackground
                                               | ImGuiWindowFlags.NoBringToFrontOnFocus);
-
-                if (m_editmode == EditMode.None)
-                {
-                    inventoryScan.EditMode = false;
-                    Console.WriteLine("Cannot edit inventory without setting m_editmode !");
-                }
-                if (m_editmode == EditMode.Drag)
-                {
-                    if (inventoryScan.isDragging)
-                    {
-                        inventoryScan.UpdateDrag(mousePos);
-                    }
-
-                    if (io.MouseDown[0] && !inventoryScan.isDragging) inventoryScan.StartDrag(mousePos);
-                    if (!io.MouseDown[0] && inventoryScan.isDragging)
-                    {
-                        inventoryScan.EndDrag();
-                        editMode=false;
-                    }
-                    if (io.MouseDown[0] && inventoryScan.isDragging) inventoryScan.UpdateDrag(mousePos);
-
-                    DrawDragRect(inventoryScan.dragStart, inventoryScan.dragEnd);
-                }
-                if (m_editmode == EditMode.FirstCell)
-                {
-                    DrawCursorSquare(mousePos, inventoryScan.CellSize, ColorRed);
-                    if (io.MouseDown[0])
-                    {
-                        inventoryScan.SetFirstCell(mousePos);
-                        editMode =false;
-                    }
-                }
-                if (m_editmode == EditMode.Bag)
-                {
-                    DrawCursorSquare(mousePos, inventoryScan.BagSize, ColorRed);
-                    if (io.MouseDown[0])
-                    {
-                        inventoryScan.SetFirstBag(mousePos);
-                        editMode =false;
-                    }
-                }
-                if (m_editmode == EditMode.SetClose)
-                {
-                    DrawCursorSquare(mousePos, swapCape.CloseButtonScale, ColorRed);
-                    if (io.MouseDown[0])
-                    {
-                        swapCape.InventoryCloseButtonPosition = mousePos;
-                        editMode = false;
-                        m_config.ClosePoint = mousePos;
-                        ConfigManager.Save(m_config);
-                    }
-                }
-                if (m_editmode == EditMode.Player)
-                {
-                    DrawCursorCircle(mousePos, reviveBot.Radius, new Vector4(0, 1, 1, 1));
-                    if (io.MouseDown[0])
-                    {
-                        reviveBot.FirstPlayerPos = mousePos;
-                        editMode = false;
-                        m_config.FirstPlayerPos = mousePos;
-                        ConfigManager.Save(m_config);
-                    }
-                }
                 ImGui.End();
                 return;
             }
             #endregion
 
-
-            //ImGui.SetNextWindowSizeConstraints(new Vector2(600, 450), screenSize);
             ImGui.Begin("mMacro - Drakensang", ImGuiWindowFlags.NoBringToFrontOnFocus
                                              //| ImGuiWindowFlags.AlwaysAutoResize
             );
 
             if (!editMode)
             {
-                if (ImGui.Button("Exit")) Application.Exit();
                 if (ImGui.BeginTabBar("MainTabs"))
                 {
                     // ================== General Tab ==================
                     if (ImGui.BeginTabItem("General"))
                     {
+                        int i = 0;
+                        Vector2 size = new Vector2(ImGui.GetContentRegionAvail().X/2-10, 0);
                         foreach (var func in FunctionManager.Instance.Functions.Where(f => f.Mode.HasFlag(ActivationMode.Both) || f.Mode.HasFlag(ActivationMode.MenuOnly)))
                         {
+                            
                             string label = $"{(func.ExecutionType == ExecutionType.Toggleable ? (func.Enabled ? "Disable" : "Enable") : "Execute")} {func.Name} ({func.Defaultkey})";
-                            if (ImGui.Button(label))
+                            if (ImGui.Button(label, size))
                             {
                                 if (func.ExecutionType == ExecutionType.RunOnce) func.Execute();
                                 if (func.ExecutionType == ExecutionType.Toggleable) func.Toggle();
                             }
+                            if (i%2==0) ImGui.SameLine();
+                            i++;
                         }
                         ImGui.Separator();
                         if (ImGui.InputInt("Clicker Delay(ms)", ref delay, 1, 10000))
@@ -163,8 +108,6 @@ namespace mMacro.App
 
                         ImGui.EndTabItem();
                     }
-                    // ================== Inventory Tab ==================
-                    DrawInventory();
                     // ================== Keybinds Tab ==================
                     if (ImGui.BeginTabItem("Keybinds"))
                     {
@@ -178,16 +121,24 @@ namespace mMacro.App
 
                             string keyText = KeybindManager.Instance.FormatKeybind(bind.Modifiers, bind.Key);
 
+                            float fullWidth = ImGui.GetContentRegionAvail().X;
+
+                            float nameWidth = ImGui.CalcTextSize(name).X;
+                            float keyWidth  = ImGui.CalcTextSize($"[{keyText}]").X;
+                            float buttonWidth = 80.0f;
+
+                            float spaceing = (fullWidth - (nameWidth + keyWidth + buttonWidth)) /2;
+
                             ImGui.Text($"{name}");
-                            ImGui.SameLine();
+                            ImGui.SameLine((float)((nameWidth + spaceing *1.5) /1.5));
                             ImGui.Text($"[{keyText}]");
-                            ImGui.SameLine();
+                            ImGui.SameLine(nameWidth + spaceing + keyWidth +spaceing - buttonWidth /2);
 
                             if (KeybindManager.Instance.IsListening(name))
                             {
                                 ImGui.Text("Press any key...");
                             }
-                            else if (ImGui.Button($"Change##{name}"))
+                            else if (ImGui.Button($"Change##{name}", new Vector2(buttonWidth, 0)))
                             {
                                 KeybindManager.Instance.StartListening(name);
                             }
@@ -198,7 +149,21 @@ namespace mMacro.App
                     DrawSwapCape();
                     // ================== Revive Bot ==================
                     DrawReviveBot();
+                
+                    if(ImGui.BeginTabItem("Inventory"))
+                    {
+                        if (ImGui.BeginTabBar("Inventory"))
+                        {
+                            // ================== Sell Bot ==================
+                            DrawInventory();
+                            // ================== Melt Bot ==================
+                            DrawMeltBot();
 
+                            ImGui.EndTabBar();
+
+                        }
+                        ImGui.EndTabItem();
+                    }
                     ImGui.EndTabBar();
                 }
             }
@@ -206,7 +171,6 @@ namespace mMacro.App
 
             if (DebugMode)
             {
-                DrawDragRect(inventoryScan.dragStart, inventoryScan.dragEnd);
                 Vector2 firstCell = inventoryScan.firstCellPos;
                 int cellSize = inventoryScan.CellSize;
                 for (int col = 0; col<4; col++) 
@@ -231,6 +195,19 @@ namespace mMacro.App
                     bool blocked = reviveBot.m_blockOffers[i];
                     DrawCursorCircle(new Vector2(FirstPlayer.X, FirstPlayer.Y + reviveBot.Offset * i), reviveBot.Radius, blocked ? new Vector4(1, 0, 1, 1) : new Vector4(1, 1, 0, 1));
                 }
+
+                // Melt Bot
+
+                for (int  row=0;row<3;row++)
+                {
+                    for (int col=0;col<3;col++)
+                    {
+                        DrawCursorSquare(new Vector2(meltBot.MeltFirstPos.X +  meltBot.CellSize* row + GridHelper.GetOffset(row), meltBot.MeltFirstPos.Y + meltBot.CellSize * col +GridHelper.GetOffset(col)), meltBot.CellSize, new Vector4(0.2f,0.5f,1,1));
+                    }
+                }
+
+                DrawCursorSquare(meltBot.MeltButtonPos, meltBot.MeltButtonSize, ColorRed);
+                DrawCursorSquare(meltBot.MeltCloseBtn, 30, ColorRed);
             }
 
             ImGui.End();
@@ -243,6 +220,15 @@ namespace mMacro.App
 
             drawList.AddRect(new Vector2(pos.X - CellSize/2, pos.Y - CellSize/2),
                              new Vector2(pos.X + CellSize/2, pos.Y + CellSize/2),
+                             ImGui.ColorConvertFloat4ToU32(Color)
+            );
+        }
+        public void DrawCursorSquare(Vector2 pos, Vector2 CellSize, Vector4 Color)
+        {
+            var drawList = ImGui.GetForegroundDrawList();
+
+            drawList.AddRect(new Vector2(pos.X - CellSize.X/2, pos.Y - CellSize.Y/2),
+                             new Vector2(pos.X + CellSize.X/2, pos.Y + CellSize.Y/2),
                              ImGui.ColorConvertFloat4ToU32(Color)
             );
         }
@@ -287,8 +273,8 @@ namespace mMacro.App
                     m_config.ScanType = (ScanType)selectedScan;
                     ConfigManager.Save(m_config);
                 }
-                ImGui.SameLine();
-                ImGui.PushItemWidth(50);
+                //ImGui.SameLine();
+                ImGui.PushItemWidth(ImGui.CalcItemWidth());
                 if (ImGui.SliderInt("##ScanLevel", ref inventoryScan.scanLevel, 1, 5))
                 {
                     m_config.scanLevel = (int)inventoryScan.scanLevel;
@@ -302,25 +288,30 @@ namespace mMacro.App
                 ImGui.Text("Initialize");
                 if (ImGui.Button("Set First Cell"))
                 {
-                    m_editmode = EditMode.FirstCell;
-                    editMode =true;
-                }
-                ImGui.SameLine();
-                if(ImGui.Button("Inventory Grid"))
-                {
-                    m_editmode = EditMode.Drag;
-                    editMode=  true;
+                    editSession.Mode = EditMode.FirstCell;
+                    editSession.Size = new Vector2(inventoryScan.CellSize, inventoryScan.CellSize);
+                    editSession.OnSet = (pos) =>
+                    {
+                        inventoryScan.firstCellPos = pos;
+                        m_config.FirstCellPosition = pos;
+                    };
+                    editSession.Active =true;
                 }
                 ImGui.SameLine();
                 if (ImGui.Button("Set Bag"))
                 {
-                    m_editmode = EditMode.Bag;
-                    editMode=  true;
+                    editSession.Mode = EditMode.Bag;
+                    editSession.Size = new Vector2(inventoryScan.BagSize, inventoryScan.BagSize);
+                    editSession.OnSet = (pos) =>
+                    {
+                        inventoryScan.firstBagPos = pos;
+                        m_config.FirstBagPosition = pos;
+                    };
+                    editSession.Active =true;
                 }
 
                 ImGui.Separator();
                 ImGui.Text("Item Colors:");
-         
                 ImGui.TextColored(new Vector4(1, 0, 0, 1), "Not recommended to change");
                 foreach (var kvp in inventoryScan.ColorRanges)
                 {
@@ -363,26 +354,29 @@ namespace mMacro.App
                 ImGui.Text("SwapCape");
                 if (ImGui.Button($"{(editMode ? "Select the Inventory Closeing button!" : "Set Close Button")}"))
                 {
-                    m_editmode = EditMode.SetClose;
-                    editMode= true;
+                    editSession.Mode = EditMode.SetClose;
+                    editSession.Size = new Vector2(swapCape.CloseButtonScale, swapCape.CloseButtonScale);
+                    editSession.OnSet = (pos) =>
+                    {
+                        swapCape.InventoryCloseButtonPosition = pos;
+                        m_config.ClosePoint = pos;
+                    };
+                    editSession.Active=true;
                 }
 
                 ImGui.Text("Inventory Settings:");
                 if (ImGui.SliderInt("Bag", ref swapCape.bag, 0, 8))
                 {
-                    swapCape.bag = swapCape.bag;
                     m_config.swapBag = swapCape.bag;
                     ConfigManager.Save(m_config);
                 }
                 if(ImGui.SliderInt("Colums", ref swapCape.col, 0, 3))
                 {
-                    swapCape.col = swapCape.col;
                     m_config.swapCol = swapCape.col;
                     ConfigManager.Save(m_config);
                 }
                 if (ImGui.SliderInt("Rows", ref swapCape.row, 0, 6))
                 {
-                    swapCape.row = swapCape.row;
                     m_config.swapRow = swapCape.row;
                     ConfigManager.Save(m_config);
                 }
@@ -438,8 +432,14 @@ namespace mMacro.App
                 ImGui.SameLine();
                 if(ImGui.Button("Save pos"))
                 {
-                    m_editmode = EditMode.Player;
-                    editMode= true;
+                    editSession.Mode= EditMode.Player;
+                    editSession.Radius = reviveBot.Radius;
+                    editSession.OnSet = (pos) =>
+                    {
+                        reviveBot.FirstPlayerPos = pos;
+                        m_config.FirstPlayerPos= pos;
+                    };
+                    editSession.Active = true;
                 }
 
                 ImGui.Separator();
@@ -458,5 +458,79 @@ namespace mMacro.App
             }
         }
         #endregion
+
+        #region MeltBot
+        private void DrawMeltBot()
+        {
+            
+            if (ImGui.BeginTabItem("Melt Bot"))
+            {
+
+                ImGui.Text("Initialize");
+                if (ImGui.Button("Set First Smelt Cell"))
+                {
+                    editSession.Mode    = EditMode.FirstCell;
+                    editSession.Size    = new Vector2(meltBot.CellSize, meltBot.CellSize);
+                    editSession.OnSet   = pos =>
+                    {
+                        meltBot.MeltFirstPos = pos;
+                        m_config.MeltFirstPos =pos;
+                    };
+                    editSession.Active  = true;
+                }
+                if (ImGui.Button("Set Smelt Button"))
+                {
+                    editSession.Mode    = EditMode.MeltBot;
+                    editSession.Size    =meltBot.MeltButtonSize;
+                    editSession.OnSet   = pos =>
+                    {
+                        meltBot.MeltButtonPos = pos;
+                        m_config.MeltButtonPos =pos;
+                    };
+                    editSession.Active  = true;
+                }
+                if (ImGui.Button("Set Smelt Close Btn"))
+                {
+                    editSession.Mode    = EditMode.SetClose;
+                    editSession.Size    = new Vector2(30,30);
+                    editSession.OnSet   = pos =>
+                    {
+                        meltBot.MeltCloseBtn = pos;
+                        m_config.MeltCloseBtn =pos;
+                    };
+                    editSession.Active  = true;
+                }
+                ImGui.Separator();
+                ImGui.EndTabItem();
+            }
+        }
+        #endregion
+
+        private void HandleEditSession(Vector2 mousePos)
+        {
+            if (!editSession.Active) return;
+
+
+            switch(editSession.Mode)
+            {
+                case EditMode.FirstCell:
+                case EditMode.Bag:
+                case EditMode.SetClose:
+                case EditMode.MeltBot:
+                    DrawCursorSquare(mousePos, editSession.Size, ColorRed);
+                    break;
+                case EditMode.Player:
+                    DrawCursorCircle(mousePos, editSession.Radius, ColorRed); 
+                    break;
+            }
+
+            if (ImGui.GetIO().MouseClicked[0])
+            {
+                editSession.OnSet?.Invoke(mousePos);
+                editSession.Active = false;
+                ConfigManager.Save(m_config);
+            }
+        }
+
     }
 }
