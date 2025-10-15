@@ -11,6 +11,7 @@ using static mMacro.Core.Utils.PixelUtils;
 using WindowsInput;
 using WindowsInput.Native;
 using System.Runtime.InteropServices.Marshalling;
+using static mMacro.Core.Utils.Click;
 
 namespace mMacro.Core.Functions
 {
@@ -41,33 +42,32 @@ namespace mMacro.Core.Functions
             // TODO: Save Keys to cfg;
         }
 
-        public override void Execute()
+        public override async void Execute()
         {
+            Point ogPos = Cursor.Position;
             Color color = GetPixelColor(InventoryCloseButtonPosition);
             bool originalState = CheckPixel(color, ExitButtonColor);
             
             if (!originalState)
             {
                 m_sim.Keyboard.KeyPress(OpenInventory);
+                await Task.Delay(50);
             }
 
             Vector2 bagPos = GridHelper.GetBagScreenPosition(bag, m_config.FirstBagPosition);
-            Cursor.Position = new Point((int)bagPos.X, (int)bagPos.Y);
-            Task.Delay(100).Wait();
-            m_sim.Mouse.LeftButtonClick();
-            Task.Delay(100).Wait();
+            await ClickAtAsync(new Point((int)bagPos.X, (int)bagPos.Y), 50);
 
 
             PointF pos =  GridHelper.GetCellScreenPosition(col, row, (PointF)m_config.FirstCellPosition);
-            Cursor.Position = new Point((int)pos.X, (int)pos.Y);
-            m_sim.Mouse.LeftButtonDoubleClick();
+            Point _pos = new Point((int)pos.X, (int)pos.Y);
 
-            Task.Delay(50).Wait();
+            await ClickAtAsync(_pos, 50, ClickType.LEFT_DOUBLE);
             m_sim.Keyboard.KeyPress(RideMount);
-            Task.Delay(50).Wait();
-            Cursor.Position = new Point((int)pos.X, (int)pos.Y);
-            m_sim.Mouse.LeftButtonDoubleClick();
+            await ClickAtAsync(_pos, 50, ClickType.LEFT_DOUBLE);
 
+            await ClickAtAsync(InventoryCloseButtonPosition, 50, ClickType.LEFT);
+
+            Cursor.Position= ogPos;
         }
     }
 }
