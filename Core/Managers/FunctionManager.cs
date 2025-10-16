@@ -18,11 +18,36 @@ namespace mMacro.Core.Managers
                 throw new InvalidOperationException("FunctionManager already initialized!");
 
             m_instance= this;
+
+            if (KeybindManager.Instance != null)
+                KeybindManager.Instance.OnKeybindChanged += OnKeybindChanged;
+            else
+                Console.WriteLine("[FunctionManager] Warning: KeybindManager not initialized yet!");
         }
+
+        private void OnKeybindChanged(string keybindName, Keybind newKeybind)
+        {
+            var func = Functions.Find(f => f.Name == keybindName);
+            if (func == null)
+            {
+                Console.WriteLine($"[FunctionManager] Warning: Function '{keybindName}' not found for keybind update.");
+                return;
+            }
+
+            func.Defaultkey = newKeybind.Key;
+            Console.WriteLine($"[FunctionManager] Updated keybind for '{keybindName}' → {newKeybind.Key}");
+        }
+
         public void Register(MacroFunction function)
         {
+            if (Functions.Any(f => f.Name == function.Name))
+            {
+                Console.WriteLine($"[FunctionManager] Function '{function.Name}' already registered. Skipping.");
+                return;
+            }
+
             Functions.Add(function);
-            Console.WriteLine($"{function.Name} Has been registered!");
+            Console.WriteLine($"[FunctionManager] '{function.Name}' has been registered!");
         }
         public void ExecuteEnabled()
         {

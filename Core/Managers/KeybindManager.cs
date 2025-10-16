@@ -40,6 +40,9 @@ namespace mMacro.Core.Managers
         private string? m_listeningKeybindName = null;
         private bool m_awaitKeyRelease = false;
         private AppConfig m_config;
+
+        public delegate void KeybindChangeHandler(string keybindName, Keybind newKeybind);
+        public event KeybindChangeHandler OnKeybindChanged;
         public KeybindManager()
         {
             if (m_instance !=null)
@@ -161,6 +164,7 @@ namespace mMacro.Core.Managers
             keybind.Modifiers = modifiers;
             keybind.WasPressed = true;
 
+            OnKeybindChanged?.Invoke(m_listeningKeybindName, keybind);
             SaveConfig();
             m_awaitKeyRelease = true;
             m_listeningKeybindName = null;
