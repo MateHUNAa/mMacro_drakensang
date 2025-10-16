@@ -5,12 +5,7 @@ using mMacro.Core.Functions.Inventory;
 using mMacro.Core.Managers;
 using mMacro.Core.Models;
 using mMacro.Core.Utils;
-using System;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Xml.Linq;
-using Vortice.Direct3D11;
 using WindowsInput.Native;
 
 namespace mMacro.App
@@ -106,7 +101,7 @@ namespace mMacro.App
                         bool isOddCount = (count % 2 != 0);
 
                         Vector2 size = new Vector2((isLast && isOddCount) ? ImGui.GetContentRegionAvail().X - 10 : halfWidth, 0);
-
+                        
                         string label = $"{(func.ExecutionType == ExecutionType.Toggleable ? (func.Enabled ? "Disable" : "Enable") : "Execute")} {func.Name} ({func.Defaultkey})";
                         if (ImGui.Button(label, size))
                         {
