@@ -39,11 +39,7 @@ Follow the setup instructions carefully for each bot to ensure proper functional
 
 ✅ Once all three steps are done, the Sell Bot can properly identify and interact with your inventory grid.
 
-### 🎥 Demo
-<video width="600" controls>
-  <source src="https://imgur.com/a/ZMzBju6" type="video/gif">
-  Your browser does not support the video tag.
-</video>
+[🎥 Demo](https://imgur.com/a/ZMzBju6)
 ---
 
 ## 🧥 SwapCape
@@ -68,12 +64,7 @@ Follow the setup instructions carefully for each bot to ensure proper functional
 
 ✅ These bots automatically melt gems and items efficiently.
 
-### 🎥 Demo
-[Assets/meltgem.mp4](https://imgur.com/a/HzqKUSZ)
-<video width="600" controls>
-  <source src="[Assets/meltgem.mp4](https://imgur.com/a/HzqKUSZ)" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[🎥 Demo](https://imgur.com/a/HzqKUSZ)
 
 ---
 
