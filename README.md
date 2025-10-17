@@ -41,10 +41,9 @@ Follow the setup instructions carefully for each bot to ensure proper functional
 
 ### 🎥 Demo
 <video width="600" controls>
-  <source src="https://imgur.com/a/ZMzBju6" type="video/mp4">
+  <source src="https://imgur.com/a/ZMzBju6" type="video/gif">
   Your browser does not support the video tag.
 </video>
-<blockquote class="imgur-embed-pub" lang="en" data-id="a/HzqKUSZ"  ><a href="//imgur.com/a/HzqKUSZ">Very Unique Title2</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 ---
 
 ## 🧥 SwapCape
