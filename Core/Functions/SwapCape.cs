@@ -24,6 +24,8 @@ namespace mMacro.Core.Functions
         public VirtualKeyCode OpenInventory = VirtualKeyCode.VK_I;
         public VirtualKeyCode RideMount     = VirtualKeyCode.VK_O;
         private AppConfig m_config;
+
+        private int ClickDelay => Settings.Instance.m_Timeings.SwapCapeClickDelay;
         #endregion
 
         public SwapCape() : base("Cape Swap", Keys.D0, ActivationMode.KeybindOnly, ExecutionType.RunOnce)
@@ -45,21 +47,21 @@ namespace mMacro.Core.Functions
             if (!originalState)
             {
                 m_sim.Keyboard.KeyPress(OpenInventory);
-                await Task.Delay(50);
+                await Task.Delay(ClickDelay);
             }
 
             Vector2 bagPos = GridHelper.GetBagScreenPosition(bag, m_config.FirstBagPosition);
-            await ClickAtAsync(new Point((int)bagPos.X, (int)bagPos.Y), 50);
+            await ClickAtAsync(new Point((int)bagPos.X, (int)bagPos.Y), ClickDelay);
 
 
             PointF pos =  GridHelper.GetCellScreenPosition(col, row, (PointF)m_config.FirstCellPosition);
             Point _pos = new Point((int)pos.X, (int)pos.Y);
 
-            await ClickAtAsync(_pos, 50, ClickType.LEFT_DOUBLE);
+            await ClickAtAsync(_pos, ClickDelay, ClickType.LEFT_DOUBLE);
             m_sim.Keyboard.KeyPress(RideMount);
-            await ClickAtAsync(_pos, 50, ClickType.LEFT_DOUBLE);
+            await ClickAtAsync(_pos, ClickDelay, ClickType.LEFT_DOUBLE);
 
-            await ClickAtAsync(InventoryCloseButtonPosition, 50, ClickType.LEFT);
+            await ClickAtAsync(InventoryCloseButtonPosition, ClickDelay, ClickType.LEFT);
 
             Cursor.Position= ogPos;
         }
