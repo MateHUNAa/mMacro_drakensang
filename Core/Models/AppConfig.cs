@@ -45,6 +45,8 @@ namespace mMacro.Core.Models
 
         // ================== MeltGem ==================
         public UIPositions.CraftPositions CraftPositions { get; set; } = new UIPositions.CraftPositions();
+        // ================== Settings ==================
+        public Settings Settings { get; set; } = new Settings();
 
     }
 }

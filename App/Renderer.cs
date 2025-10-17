@@ -182,6 +182,17 @@ namespace mMacro.App
 
                 if (ImGui.BeginTabItem("Settings"))
                 {
+                    int colorTolarence = Settings.Instance.m_Offsets.ColorTolarence;
+                    if (ImGui.SliderInt("Color Tolarence", ref  colorTolarence, 1, 50))
+                    {
+                        Settings.Instance.m_Offsets.ColorTolarence = colorTolarence;
+                        m_config.Settings = Settings.Instance;
+
+                        ConfigManager.Save(m_config);
+                    }
+                    if (ImGui.IsItemHovered())
+                        ImGui.SetTooltip("Sets the ColorTolarance of the copy colors");
+
                     ImGui.Checkbox("Debug Mode", ref DebugMode);
                     ImGui.EndTabItem();
                 }
@@ -200,9 +211,9 @@ namespace mMacro.App
 
                                 PixelUtils.ColorRange range = new PixelUtils.ColorRange
                                 {
-                                    R = (pickedColor.R -5, pickedColor.R + 5),
-                                    G = (pickedColor.G -5, pickedColor.G + 5),
-                                    B = (pickedColor.B -5, pickedColor.B + 5),
+                                    R = (pickedColor.R - Settings.Instance.m_Offsets.ColorTolarence, pickedColor.R + Settings.Instance.m_Offsets.ColorTolarence),
+                                    G = (pickedColor.G - Settings.Instance.m_Offsets.ColorTolarence, pickedColor.G + Settings.Instance.m_Offsets.ColorTolarence),
+                                    B = (pickedColor.B - Settings.Instance.m_Offsets.ColorTolarence, pickedColor.B + Settings.Instance.m_Offsets.ColorTolarence),
                                 };
                                 string codeSnippet = $"new ColorRange {{ R = ({range.R.Min}, {range.R.Max}), G = ({range.G.Min}, {range.G.Max}), B = ({range.B.Min}, {range.B.Max}) }};";
 
@@ -224,7 +235,7 @@ namespace mMacro.App
 
                                     DrawCursorSquare(new Vector2(cellX, cellY), instance.CellSize, Color.FromArgb(255,0,0,255));
                                     var color = PixelUtils.GetPixelColor((int)cellX, (int)cellY);
-                                    txt = txt + "\n" + '{' +$"\"{col}x{row}\",new ColorRange {{ R = ({color.R - 5}, {color.R + 5}), G = ({color.G - 5}, {color.G + 5}), B = ({color.B - 5}, {color.B + 5})," + "}},";
+                                    txt = txt + "\n" + '{' +$"\"{col}x{row}\",new ColorRange {{ R = ({color.R - Settings.Instance.m_Offsets.ColorTolarence}, {color.R + Settings.Instance.m_Offsets.ColorTolarence}), G = ({color.G - Settings.Instance.m_Offsets.ColorTolarence}, {color.G + Settings.Instance.m_Offsets.ColorTolarence}), B = ({color.B - Settings.Instance.m_Offsets.ColorTolarence}, {color.B + Settings.Instance.m_Offsets.ColorTolarence})," + "}},";
                                     Task.Delay(50);
                                 }
                             }

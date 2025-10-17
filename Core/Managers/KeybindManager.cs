@@ -96,9 +96,9 @@ namespace mMacro.Core.Managers
                 Keybind keybind = kvp.Value;
 
                 bool isDown = Keyboard.IsKeyDown(keybind.Key);
-                bool ctrl = Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey);
-                bool shift = Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey);
-                bool alt = Keyboard.IsKeyDown(Keys.Alt);
+                bool ctrl   = Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey);
+                bool shift  = Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey);
+                bool alt    = Keyboard.IsKeyDown(Keys.Alt);
 
                 bool modifiersMatch =
                     (keybind.Modifiers.HasFlag(KeyModifiers.Ctrl) == ctrl) &&
