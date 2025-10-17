@@ -70,7 +70,7 @@ Follow the setup instructions carefully for each bot to ensure proper functional
 ✅ These bots automatically melt gems and items efficiently.
 
 ### 🎥 Demo
-
+[Assets/meltgem.mp4](https://imgur.com/a/HzqKUSZ)
 <video width="600" controls>
   <source src="[Assets/meltgem.mp4](https://imgur.com/a/HzqKUSZ)" type="video/mp4">
   Your browser does not support the video tag.
