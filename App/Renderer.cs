@@ -54,6 +54,7 @@ namespace mMacro.App
             return base.PostInitialized();
         }
 
+        private void SaveConfig() => ConfigManager.Save(m_config ?? throw new Exception("SaveConfig called without it being intialized;"));
         /// <inheritdoc/>
         protected override void Render()
         {
@@ -199,43 +200,48 @@ namespace mMacro.App
                         ImGui.Checkbox("Debug Mode", ref DebugMode);
                     }
 
-
-                    ImGui.SeparatorText("Melter Settings");
+                    ImGui.SeparatorText("App Settings");
+                    if (ImGui.CollapsingHeader("Sizes"))
                     {
-                        int meltItemClickDelay = Settings.Instance.m_Timeings.MeltItemClickDelay;
-                        if (ImGui.SliderInt("Melt Item Click Delay (ms)", ref meltItemClickDelay, 1, 1000))
                         {
-                            Settings.Instance.m_Timeings.MeltItemClickDelay = meltItemClickDelay;
-                            m_config.Settings.m_Timeings.MeltItemClickDelay = meltItemClickDelay;
-                            ConfigManager.Save(m_config);
+                            int cellSize = Settings.Instance.m_Sizes.CellSize;
+                            if (ImGui.InputInt("Cell Size", ref cellSize))
+                            {
+                                Settings.Instance.m_Sizes.CellSize = cellSize;
+                                SaveConfig();
+                            }
+                            if (ImGui.IsItemHovered())
+                                ImGui.SetTooltip("Sets the cell sizes; Default: 76");
+
+                            // BagSize
+                            int bagSize = Settings.Instance.m_Sizes.BagSize;
+                            if (ImGui.InputInt("Bag Size", ref bagSize))
+                            {
+                                Settings.Instance.m_Sizes.BagSize = bagSize;
+                                SaveConfig();
+                            }
+                            if (ImGui.IsItemHovered())
+                                ImGui.SetTooltip("Sets the bag sizes; Default: 40");
                         }
-                        if (ImGui.IsItemHovered())
-                            ImGui.SetTooltip("Delay between moveing the mouse and clicking an item.");
-
-                        int meltGemClickDelay = Settings.Instance.m_Timeings.MeltGemClickDelay;
-                        if (ImGui.SliderInt("Melt Gem Click Delay (ms)", ref meltGemClickDelay, 1, 1000))
-                        {
-                            Settings.Instance.m_Timeings.MeltGemClickDelay = meltGemClickDelay;
-                            m_config.Settings.m_Timeings.MeltGemClickDelay = meltGemClickDelay;
-                            ConfigManager.Save(m_config);
-                        }
-                        if (ImGui.IsItemHovered())
-                            ImGui.SetTooltip("Delay between moveing the mouse and clicking an item.");
-
-
-                        int meltGemTaskDelay = Settings.Instance.m_Timeings.MeltGemTaskEndDelay;
-                        if (ImGui.SliderInt("Melt Task end delay (ms)", ref meltGemTaskDelay, 1, 10000))
-                        {
-                            Settings.Instance.m_Timeings.MeltGemTaskEndDelay = meltGemTaskDelay;
-                            m_config.Settings.m_Timeings.MeltGemTaskEndDelay = meltGemClickDelay;
-                            ConfigManager.Save(m_config);
-                        }
-                        if (ImGui.IsItemHovered())
-                            ImGui.SetTooltip("Wait after finishing a task.");
-
-
                     }
-                  
+
+                    ImGui.Spacing();
+
+                    if (ImGui.CollapsingHeader("Offsets"))
+                    {
+                        int bagOffsetX = Settings.Instance.m_Offsets.BagOffsetX;
+                        if (ImGui.InputInt("Bag Offset X", ref bagOffsetX))
+                        {
+                            Settings.Instance.m_Offsets.BagOffsetX = bagOffsetX;
+                            SaveConfig();
+                        }
+                        if (ImGui.IsItemHovered())
+                            ImGui.SetTooltip("Sets the bag OffsetX; Default: 49");
+
+                        //ImGui.TextColored(ColorRed, "Cell offsets only changable in the source code !");
+                    }
+
+
                     ImGui.EndTabItem();
                 }
 
@@ -550,6 +556,18 @@ namespace mMacro.App
                         ImGui.SetTooltip("The row where the cape is located.");
                 }
 
+                ImGui.SeparatorText("Settings");
+                {
+                    int clickDelay = Settings.Instance.m_Timeings.SwapCapeClickDelay;
+                    if (ImGui.SliderInt("Click Delay (ms)", ref clickDelay, 1, 800))
+                    {
+                        Settings.Instance.m_Timeings.SwapCapeClickDelay = clickDelay;
+                        SaveConfig();
+                    }
+                    if (ImGui.IsItemHovered())
+                        ImGui.SetTooltip("Time between moveing the cursor and clicking");
+                }
+
 
                 ImGui.SeparatorText("Keybinds");
 
@@ -681,6 +699,18 @@ namespace mMacro.App
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip("Select the 'X' Close button in the Smelting Furnace");
                 ImGui.EndTabItem();
+
+                ImGui.SeparatorText("Settings");
+                int meltItemClickDelay = Settings.Instance.m_Timeings.MeltItemClickDelay;
+                if (ImGui.SliderInt("Melt Item Click Delay (ms)", ref meltItemClickDelay, 1, 1000))
+                {
+                    Settings.Instance.m_Timeings.MeltItemClickDelay = meltItemClickDelay;
+                    m_config.Settings.m_Timeings.MeltItemClickDelay = meltItemClickDelay;
+                    ConfigManager.Save(m_config);
+                }
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip("Delay between moveing the mouse and clicking an item.");
+
             }
         }
         #endregion
@@ -752,6 +782,29 @@ namespace mMacro.App
                         ImGui.SetTooltip("Select the 'Combine' button in the workbench");
 
                 }
+
+                ImGui.SeparatorText("Settings");
+                int meltGemClickDelay = Settings.Instance.m_Timeings.MeltGemClickDelay;
+                if (ImGui.SliderInt("Melt Gem Click Delay (ms)", ref meltGemClickDelay, 1, 1000))
+                {
+                    Settings.Instance.m_Timeings.MeltGemClickDelay = meltGemClickDelay;
+                    m_config.Settings.m_Timeings.MeltGemClickDelay = meltGemClickDelay;
+                    ConfigManager.Save(m_config);
+                }
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip("Delay between moveing the mouse and clicking an item.");
+
+
+                int meltGemTaskDelay = Settings.Instance.m_Timeings.MeltGemTaskEndDelay;
+                if (ImGui.SliderInt("Melt Task end delay (ms)", ref meltGemTaskDelay, 1, 10000))
+                {
+                    Settings.Instance.m_Timeings.MeltGemTaskEndDelay = meltGemTaskDelay;
+                    m_config.Settings.m_Timeings.MeltGemTaskEndDelay = meltGemClickDelay;
+                    ConfigManager.Save(m_config);
+                }
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip("Wait after finishing a task.");
+
 
                 ImGui.EndTabItem();
             }
