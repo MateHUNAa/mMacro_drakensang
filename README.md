@@ -36,7 +36,7 @@ Follow the setup instructions carefully for each bot to ensure proper functional
 3. **Set Bag**
    - Click the **"Set Bag"** button.
    - Select the **first bag** in your inventory.
-   - 
+
 # 🎥 Demo
 https://github.com/user-attachments/assets/a115ecc6-3f54-47c4-9ea7-7d4a27342477
 
