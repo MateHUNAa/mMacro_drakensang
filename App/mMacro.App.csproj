@@ -9,6 +9,8 @@
 	<UseWPF>False</UseWPF>
 	<StartupObject>mMacro.App.Program</StartupObject>
 	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+
+	  <VersionPrefix>1.2.3</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,5 +22,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\mMacro.Core.csproj" />
   </ItemGroup>
-
 </Project>
