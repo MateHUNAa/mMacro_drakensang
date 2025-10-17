@@ -6,7 +6,6 @@ using System.Numerics;
 using WindowsInput;
 using static mMacro.Core.Utils.PixelUtils;
 
-
 namespace mMacro.Core.Functions.Inventory
 {
     [Flags]
@@ -14,7 +13,7 @@ namespace mMacro.Core.Functions.Inventory
     {
         Simple,
         Slow,
-        Expensive
+        //Expensive
     }
     public class Sellbot : SingletonMacroFunction<Sellbot>
     {
@@ -33,9 +32,9 @@ namespace mMacro.Core.Functions.Inventory
 
 
         public int BagCount             = 9;
-        public readonly int CellSize    = 76;
-        public readonly int BagSize     = 40;
-        public readonly int BagOffsetX  = 49;
+        public readonly int CellSize    = Settings.Instance.m_Sizes.CellSize;
+        public readonly int BagSize     = Settings.Instance.m_Sizes.BagSize;
+        public readonly int BagOffsetX  = Settings.Instance.m_Offsets.BagOffsetX;
 
         public Vector2 firstCellPos;
         public Vector2 firstBagPos;
@@ -43,7 +42,7 @@ namespace mMacro.Core.Functions.Inventory
         public bool EditMode    = false;
         public bool DebugMode   = false;
 
-        public ScanType scanType = ScanType.Expensive;
+        public ScanType scanType = ScanType.Slow;
         public int scanLevel = 2;
         #endregion
 
@@ -80,9 +79,6 @@ namespace mMacro.Core.Functions.Inventory
                     {
                         ScanBagOnce();
                     }
-                    break;
-                case ScanType.Expensive:
-                    ScanBagMultiThreaded(bag);
                     break;
             }
         }
