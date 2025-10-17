@@ -1,7 +1,9 @@
 ﻿using mMacro.Core.Functions;
 using mMacro.Core.Functions.Inventory;
 using mMacro.Core.Managers;
+using System.Net;
 using System.Numerics;
+using System.Reflection;
 
 namespace mMacro.App
 {
@@ -11,6 +13,18 @@ namespace mMacro.App
         private static FunctionManager functionManager;
         static void Main()
         {
+            string appFolder = AppDomain.CurrentDomain.BaseDirectory;
+            string versionFile = Path.Combine(appFolder, "version.txt");
+
+            if (!File.Exists(versionFile))
+            {
+                string version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0";
+                File.WriteAllText(versionFile, version);
+            }
+
+            StartUpdater(appFolder);
+
+
             keybindManager = new KeybindManager();
             functionManager = new FunctionManager();
 
@@ -34,6 +48,21 @@ namespace mMacro.App
                 keybindManager.Update();
                 functionManager.ExecuteEnabled();
                 Thread.Sleep(1);
+            }
+        }
+
+        static void StartUpdater(string appFolder)
+        {
+            string updaterPath = Path.Combine(appFolder, "Update.exe");
+            if (File.Exists(updaterPath))
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(updaterPath);
+                } catch(Exception ex)
+                {
+                    Console.WriteLine($"Failed to start updater: {ex.Message}");
+                }
             }
         }
     }

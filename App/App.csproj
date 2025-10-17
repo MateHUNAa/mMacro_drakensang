@@ -8,11 +8,11 @@
 	<UseWindowsForms>true</UseWindowsForms>
 	<UseWPF>False</UseWPF>
 	<StartupObject>mMacro.App.Program</StartupObject>
-	<GenerateDocumentationFile>True</GenerateDocumentationFile>
-
-	  <VersionPrefix>1.2.3</VersionPrefix>
+	<GenerateDocumentationFile>False</GenerateDocumentationFile>
+	<Version>1.2.4</Version>
+	  <OutputPath>bin\Release\Release v$(Version)\</OutputPath>
   </PropertyGroup>
-
+	
   <ItemGroup>
     <PackageReference Include="ClickableTransparentOverlay" Version="11.1.0" />
     <PackageReference Include="InputSimulator" Version="1.0.4" />
@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\mMacro.Core.csproj" />
+    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Update\Update.csproj" />
   </ItemGroup>
 </Project>
