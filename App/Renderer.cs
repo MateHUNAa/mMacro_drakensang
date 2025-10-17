@@ -100,7 +100,7 @@ namespace mMacro.App
                         bool isLast = (i == count -1);
                         bool isOddCount = (count % 2 != 0);
 
-                        Vector2 size = new Vector2((isLast && isOddCount) ? ImGui.GetContentRegionAvail().X - 10 : halfWidth, 0);
+                        Vector2 size = new Vector2((isLast && isOddCount) ? ImGui.GetContentRegionAvail().X - 12 : halfWidth, 0);
                         
                         string label = $"{(func.ExecutionType == ExecutionType.Toggleable ? (func.Enabled ? "Disable" : "Enable") : "Execute")} {func.Name} ({func.Defaultkey})";
                         if (ImGui.Button(label, size))

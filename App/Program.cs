@@ -29,6 +29,7 @@ namespace mMacro.App
 
             Vector2 screenSize = renderer.screenSize;
 
+            Task.Delay(800).Wait();
             while (true) {
                 keybindManager.Update();
                 functionManager.ExecuteEnabled();

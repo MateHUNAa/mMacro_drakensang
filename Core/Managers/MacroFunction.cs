@@ -1,4 +1,5 @@
-﻿using System;
+﻿using mMacro.Core.Models;
+using System;
 using System.Windows.Forms;
 
 namespace mMacro.Core.Managers
@@ -28,12 +29,19 @@ namespace mMacro.Core.Managers
 
         private bool m_enabled = false;
 
+        private AppConfig m_conifg;
+
         protected MacroFunction(string name, Keys defaultKey, ActivationMode mode = ActivationMode.MenuOnly, ExecutionType executionType = ExecutionType.RunOnce)
         {
+            m_conifg = ConfigManager.Load();
             Name = name;
             Defaultkey = defaultKey;
             Mode = mode;
             ExecutionType = executionType;
+
+
+            if (m_conifg.Keybinds.ContainsKey(Name))
+                Defaultkey = m_conifg.Keybinds[Name].Key;
 
             if ((Mode.HasFlag(ActivationMode.KeybindOnly) || Mode.HasFlag(ActivationMode.Both))
                 && !Mode.HasFlag(ActivationMode.MenuOnly))
