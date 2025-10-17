@@ -36,10 +36,10 @@ Follow the setup instructions carefully for each bot to ensure proper functional
 3. **Set Bag**
    - Click the **"Set Bag"** button.
    - Select the **first bag** in your inventory.
+   - 
+# 🎥 Demo
+https://github.com/user-attachments/assets/a115ecc6-3f54-47c4-9ea7-7d4a27342477
 
-✅ Once all three steps are done, the Sell Bot can properly identify and interact with your inventory grid.
-
-[🎥 Demo](https://imgur.com/a/ZMzBju6)
 ---
 
 ## 🧥 SwapCape
@@ -49,9 +49,6 @@ Follow the setup instructions carefully for each bot to ensure proper functional
 1. **Set Close Button**
    - Click the **"Set Close Button"** option.
    - Select the **Close button** located in the **top-right corner** of your inventory.
-
-✅ After setting this, SwapCape will be able to automatically close the inventory when needed.
-
 ---
 
 ## 💎 MeltGems & MeltItems
@@ -62,9 +59,11 @@ Follow the setup instructions carefully for each bot to ensure proper functional
    - Select the **buttons** responsible for melting gems/items.
    - Adjust any **timing or delays** in the configuration if needed.
 
-✅ These bots automatically melt gems and items efficiently.
+✅ automatically melt gems and items.
 
-[🎥 Demo](https://imgur.com/a/HzqKUSZ)
+# 🎥 Demo
+
+https://github.com/user-attachments/assets/a3d77f9f-b98f-4049-9edb-ba3638b88bcc
 
 ---
 
@@ -75,18 +74,12 @@ Follow the setup instructions carefully for each bot to ensure proper functional
 1. **Save Pos**
    - Click the **"Save Pos"** button.
    - Create a **group** and select the **first player** on the right side of your screen.
-
-✅ This saves the player’s position and allows the Revive Bot to automate the revival process effectively.
-
 ---
 
 ## ⚡ AutoPotion & AutoClicker
 
 - **AutoPotion**: Automatically consumes potions when health drops below configured thresholds.  
 - **AutoClicker**: Automates repeated clicks for fast actions in-game.  
-
-✅ Both features are fully configurable and save your preferred settings.
-
 ---
 
 ## 🧩 Notes
