@@ -9,12 +9,12 @@ using static mMacro.Core.Utils.PixelUtils;
 
 namespace mMacro.Core.Functions.Inventory
 {
-    public class Meltgem : SingletonMacroFunction<Meltgem>
+    public class MeltGems : SingletonMacroFunction<MeltGems>
     {
         private AppConfig m_config = ConfigManager.Load();
         public CraftPositions Positions { get; set; }
 
-        public Meltgem() : base("Melt Gem", Keys.None, ActivationMode.Both, ExecutionType.RunOnce) 
+        public MeltGems() : base("Melt Gem", Keys.None, ActivationMode.Both, ExecutionType.RunOnce) 
         { 
             Positions  = m_config.CraftPositions;
         }
@@ -127,14 +127,14 @@ namespace mMacro.Core.Functions.Inventory
                     Toggle();
                     return;
                 }
-                Console.WriteLine( "WAIT TIME 90ms");
-                await ClickAtAsync(Positions.PotionPosition, 90, Utils.ClickType.LEFT);
-                await ClickAtAsync(pos, 90, Utils.ClickType.RIGHT);
-                await ClickAtAsync(Positions.MaxBtnPosition, 90, Utils.ClickType.LEFT);
-                await ClickAtAsync(Positions.MinusBtnPosition, 90, Utils.ClickType.LEFT);
-                await ClickAtAsync(Positions.CombinePosition, 90, Utils.ClickType.LEFT);
 
-                await Task.Delay(2000);
+                await ClickAtAsync(Positions.PotionPosition, Settings.Instance.m_Timeings.MeltGemClickDelay, Utils.ClickType.LEFT);
+                await ClickAtAsync(pos, Settings.Instance.m_Timeings.MeltItemClickDelay, Utils.ClickType.RIGHT);
+                await ClickAtAsync(Positions.MaxBtnPosition, Settings.Instance.m_Timeings.MeltItemClickDelay, Utils.ClickType.LEFT);
+                await ClickAtAsync(Positions.MinusBtnPosition, Settings.Instance.m_Timeings.MeltGemClickDelay, Utils.ClickType.LEFT);
+                await ClickAtAsync(Positions.CombinePosition, Settings.Instance.m_Timeings.MeltGemClickDelay, Utils.ClickType.LEFT);
+
+                await Task.Delay(Settings.Instance.m_Timeings.MeltGemTaskEndDelay);
 
             }, GemColors);
         }
