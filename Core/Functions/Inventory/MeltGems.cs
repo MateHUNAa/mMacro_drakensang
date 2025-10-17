@@ -2,7 +2,6 @@
 using mMacro.Core.Models;
 using mMacro.Core.Utils;
 using System.Numerics;
-using WindowsInput;
 using static mMacro.Core.Models.UIPositions;
 using static mMacro.Core.Utils.Click;
 using static mMacro.Core.Utils.PixelUtils;
