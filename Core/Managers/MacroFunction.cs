@@ -43,8 +43,11 @@ namespace mMacro.Core.Managers
             if (m_conifg.Keybinds.ContainsKey(Name))
                 Defaultkey = m_conifg.Keybinds[Name].Key;
 
-            if ((Mode.HasFlag(ActivationMode.KeybindOnly) || Mode.HasFlag(ActivationMode.Both))
-                && !Mode.HasFlag(ActivationMode.MenuOnly))
+            if (
+                    (Mode.HasFlag(ActivationMode.KeybindOnly) || 
+                    Mode.HasFlag(ActivationMode.Both)) && 
+                    !Mode.HasFlag(ActivationMode.MenuOnly)
+                )
             {
                 KeybindManager.Instance.Register(Name, Defaultkey, OnKeyPressed, KeyModifiers.None);
             }
