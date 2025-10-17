@@ -28,7 +28,7 @@ namespace mMacro.App
         public Vector2 screenSize   = new Vector2(screenWidth, screenHeight);
         private SwapCape swapCape   = SwapCape.Instance;
         private ReviveBot reviveBot = ReviveBot.Instance;
-        private Meltbot meltBot     = Meltbot.Instance;
+        private MeltItems meltBot     = MeltItems.Instance;
         private AppConfig? m_config;
         private Vector4 ColorRed    = new Vector4(1, 0, 0, 1);
         private bool DebugMode      = true;
@@ -182,18 +182,60 @@ namespace mMacro.App
 
                 if (ImGui.BeginTabItem("Settings"))
                 {
-                    int colorTolarence = Settings.Instance.m_Offsets.ColorTolarence;
-                    if (ImGui.SliderInt("Color Tolarence", ref  colorTolarence, 1, 50))
+
+                    ImGui.SeparatorText("Debug Settings");
                     {
-                        Settings.Instance.m_Offsets.ColorTolarence = colorTolarence;
-                        m_config.Settings = Settings.Instance;
+                        int colorTolarence = Settings.Instance.m_Offsets.ColorTolarence;
+                        if (ImGui.SliderInt("Color Tolarence", ref colorTolarence, 1, 50))
+                        {
+                            Settings.Instance.m_Offsets.ColorTolarence = colorTolarence;
+                            m_config.Settings = Settings.Instance;
 
-                        ConfigManager.Save(m_config);
+                            ConfigManager.Save(m_config);
+                        }
+                        if (ImGui.IsItemHovered())
+                            ImGui.SetTooltip("Sets the ColorTolarance of the copy colors");
+
+                        ImGui.Checkbox("Debug Mode", ref DebugMode);
                     }
-                    if (ImGui.IsItemHovered())
-                        ImGui.SetTooltip("Sets the ColorTolarance of the copy colors");
 
-                    ImGui.Checkbox("Debug Mode", ref DebugMode);
+
+                    ImGui.SeparatorText("Melter Settings");
+                    {
+                        int meltItemClickDelay = Settings.Instance.m_Timeings.MeltItemClickDelay;
+                        if (ImGui.SliderInt("Melt Item Click Delay (ms)", ref meltItemClickDelay, 1, 1000))
+                        {
+                            Settings.Instance.m_Timeings.MeltItemClickDelay = meltItemClickDelay;
+                            m_config.Settings.m_Timeings.MeltItemClickDelay = meltItemClickDelay;
+                            ConfigManager.Save(m_config);
+                        }
+                        if (ImGui.IsItemHovered())
+                            ImGui.SetTooltip("Delay between moveing the mouse and clicking an item.");
+
+                        int meltGemClickDelay = Settings.Instance.m_Timeings.MeltGemClickDelay;
+                        if (ImGui.SliderInt("Melt Gem Click Delay (ms)", ref meltGemClickDelay, 1, 1000))
+                        {
+                            Settings.Instance.m_Timeings.MeltGemClickDelay = meltGemClickDelay;
+                            m_config.Settings.m_Timeings.MeltGemClickDelay = meltGemClickDelay;
+                            ConfigManager.Save(m_config);
+                        }
+                        if (ImGui.IsItemHovered())
+                            ImGui.SetTooltip("Delay between moveing the mouse and clicking an item.");
+
+
+                        int meltGemTaskDelay = Settings.Instance.m_Timeings.MeltGemTaskEndDelay;
+                        if (ImGui.SliderInt("Melt Task end delay (ms)", ref meltGemTaskDelay, 1, 10000))
+                        {
+                            Settings.Instance.m_Timeings.MeltGemTaskEndDelay = meltGemTaskDelay;
+                            m_config.Settings.m_Timeings.MeltGemTaskEndDelay = meltGemClickDelay;
+                            ConfigManager.Save(m_config);
+                        }
+                        if (ImGui.IsItemHovered())
+                            ImGui.SetTooltip("Wait after finishing a task.");
+
+
+                    }
+                  
                     ImGui.EndTabItem();
                 }
 
@@ -658,7 +700,7 @@ namespace mMacro.App
                     {
                         StartEditSession(editSession, (pos) =>
                         {
-                            Meltgem.Instance.Positions.PotionPosition = pos;
+                            MeltGems.Instance.Positions.PotionPosition = pos;
                             m_config.CraftPositions.PotionPosition = pos;
                         }, EditMode.FirstCell, Color.FromArgb(255,255,0,0),new Vector2(100, 55));
                     }
@@ -669,7 +711,7 @@ namespace mMacro.App
                     {
                         StartEditSession(editSession, (pos) =>
                         {
-                            Meltgem.Instance.Positions.MaxBtnPosition = pos;
+                            MeltGems.Instance.Positions.MaxBtnPosition = pos;
                             m_config.CraftPositions.MaxBtnPosition = pos;
                         }, EditMode.FirstCell, Color.FromArgb(255, 255, 0, 0), new Vector2(35, 15));
                        
@@ -681,7 +723,7 @@ namespace mMacro.App
                     {
                         StartEditSession(editSession, (pos) =>
                         {
-                            Meltgem.Instance.Positions.MinusBtnPosition = pos;
+                            MeltGems.Instance.Positions.MinusBtnPosition = pos;
                             m_config.CraftPositions.MinusBtnPosition = pos;
                         }, EditMode.FirstCell, Color.FromArgb(255, 255, 0, 0), 18);
                     }
@@ -692,7 +734,7 @@ namespace mMacro.App
                     {
                         StartEditSession(editSession, (pos) =>
                         {
-                            Meltgem.Instance.Positions.ClosePosition = pos;
+                            MeltGems.Instance.Positions.ClosePosition = pos;
                             m_config.CraftPositions.ClosePosition = pos;
                         }, EditMode.FirstCell, Color.FromArgb(255, 0, 255, 0), 25);
                     }
@@ -702,7 +744,7 @@ namespace mMacro.App
                     {
                         StartEditSession(editSession, (pos) =>
                         {
-                            Meltgem.Instance.Positions.CombinePosition = pos;
+                            MeltGems.Instance.Positions.CombinePosition = pos;
                             m_config.CraftPositions.CombinePosition = pos;
                         }, EditMode.FirstCell, Color.FromArgb(255, 0, 255, 0), new Vector2(180, 45));
                     }

@@ -6,7 +6,9 @@ namespace mMacro.Core.Models
     {
         public class Timeings
         {
-
+            public int MeltItemClickDelay { get; set; } = 150;
+            public int MeltGemClickDelay { get; set; } = 90;
+            public int MeltGemTaskEndDelay { get; set; } = 2000;
         }
 
         public class Offsets

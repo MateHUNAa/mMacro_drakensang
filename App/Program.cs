@@ -18,8 +18,8 @@ namespace mMacro.App
             SwapCape swapCape       = SwapCape.Instance;
             ReviveBot revivebot     = ReviveBot.Instance;
             AutoPotion autoPotion   = AutoPotion.Instance;
-            Meltbot meltBot         = Meltbot.Instance;
-            Meltgem metlGem         = Meltgem.Instance;
+            MeltItems meltBot         = MeltItems.Instance;
+            MeltGems metlGem         = MeltGems.Instance;
             AutoClicker autoClicker     = new AutoClicker();
             Renderer renderer           = new Renderer();
 
