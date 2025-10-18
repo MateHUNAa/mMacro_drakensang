@@ -65,7 +65,8 @@ namespace mMacro.App
             var io = ImGui.GetIO();
             var mousePos = io.MousePos;
             HandleEditSession(mousePos);
-            
+            ImGui.StyleColorsClassic();
+
             #region EditMode
             if (editSession.Active)
             {
