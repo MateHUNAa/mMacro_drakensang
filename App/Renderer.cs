@@ -1,4 +1,5 @@
-﻿using ClickableTransparentOverlay;
+﻿using App.UI;
+using ClickableTransparentOverlay;
 using ImGuiNET;
 using mMacro.Core.Functions;
 using mMacro.Core.Functions.Inventory;
@@ -25,14 +26,14 @@ namespace mMacro.App
         }
 
         private Sellbot inventoryScan = Sellbot.Instance;
-        public Vector2 screenSize   = new Vector2(screenWidth, screenHeight);
-        private SwapCape swapCape   = SwapCape.Instance;
+        public Vector2 screenSize = new Vector2(screenWidth, screenHeight);
+        private SwapCape swapCape = SwapCape.Instance;
         private ReviveBot reviveBot = ReviveBot.Instance;
-        private MeltItems meltBot     = MeltItems.Instance;
+        private MeltItems meltBot = MeltItems.Instance;
         private AppConfig? m_config;
-        private Vector4 ColorRed    = new Vector4(1, 0, 0, 1);
-        private bool DebugMode      = true;
-        private bool DebugDraw      = false;
+        private Vector4 ColorRed = new Vector4(1, 0, 0, 1);
+        private bool DebugMode = true;
+        private bool DebugDraw = false;
         private EditSession editSession = new EditSession();
         private enum EditMode
         {
@@ -43,6 +44,9 @@ namespace mMacro.App
             Player,
             MeltBot
         }
+
+        private bool showOverlay = true;
+
         /// <inheritdoc/>
         public bool IsVisible { get; set; } = true;
         private int delay = 1;
@@ -58,7 +62,6 @@ namespace mMacro.App
         /// <inheritdoc/>
         protected override void Render()
         {
-            if (!IsVisible) return;
             var io = ImGui.GetIO();
             var mousePos = io.MousePos;
             HandleEditSession(mousePos);
@@ -75,6 +78,12 @@ namespace mMacro.App
                 return;
             }
             #endregion
+
+
+            if (showOverlay)
+                FeatureOverlay.Draw();
+
+            if (!IsVisible) return;
 
             ImGui.Begin("mMacro - Drakensang", ImGuiWindowFlags.NoBringToFrontOnFocus
                                              //| ImGuiWindowFlags.AlwaysAutoResize
@@ -223,6 +232,7 @@ namespace mMacro.App
                             if (ImGui.IsItemHovered())
                                 ImGui.SetTooltip("Sets the bag sizes; Default: 40");
                         }
+
                     }
 
                     ImGui.Spacing();
@@ -241,6 +251,7 @@ namespace mMacro.App
                         //ImGui.TextColored(ColorRed, "Cell offsets only changable in the source code !");
                     }
 
+                    ImGui.Checkbox("Show overlay", ref showOverlay);
 
                     ImGui.EndTabItem();
                 }
