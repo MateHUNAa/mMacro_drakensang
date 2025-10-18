@@ -104,15 +104,21 @@ namespace Update
 
             Process.Start(mainExe);
             Console.WriteLine("Update applied and app restarted.");
+
+            Console.ReadLine();
+            return;
         }
         static bool IsNewerVersion(string current, string latest)
         {
             var cv = current.Split('.');
             var lv = latest.Split('.');
-            for (int i = 0; i < cv.Length; i++)
+            int length = Math.Max(cv.Length, lv.Length);
+
+            for (int i = 0; i < length; i++)
             {
-                int c = int.Parse(cv[i]);
-                int l = int.Parse(lv[i]);
+                int c = i < cv.Length ? int.Parse(cv[i]) : 0;
+                int l = i < lv.Length ? int.Parse(lv[i]) : 0;
+
                 if (c < l) return true;
                 if (c > l) return false;
             }
