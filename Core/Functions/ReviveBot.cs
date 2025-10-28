@@ -1,13 +1,7 @@
 ﻿using mMacro.Core.Managers;
 using mMacro.Core.Models;
 using mMacro.Core.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using WindowsInput;
 using static mMacro.Core.Utils.PixelUtils;
 namespace mMacro.Core.Functions
 {
@@ -20,7 +14,8 @@ namespace mMacro.Core.Functions
         public Vector2 FirstPlayerPos = Vector2.Zero;
         public float Radius = 21f;
         public int Offset = 67;
-        public ColorRange ReviveColor = new ColorRange { R = (47, 57), G = (56, 66), B = (50, 60) };
+       
+        public ColorRange ReviveColor = new ColorRange { R = (76, 92), G = (87, 103), B = (74, 90) };
 
         public ReviveBot() : base("Revive Bot", Keys.None, ActivationMode.MenuOnly, ExecutionType.Toggleable)
         {
@@ -47,12 +42,13 @@ namespace mMacro.Core.Functions
         }
         public override void Execute()
         {
-            for (int i = 1; i<5; i++)
+            for (int i = 0; i<5; i++)
             {
                 float x = FirstPlayerPos.X;
                 float y = FirstPlayerPos.Y + Offset * i;
 
-                bool needRevive = CheckPixel(GetPixelColor(x, y), ReviveColor);
+                Color pixelColor = GetPixelColor(x, y);
+                bool needRevive = CheckPixel(pixelColor, ReviveColor);
 
                 if (needRevive && !m_reviveOffered[i] && !m_blockOffers[i])
                 {
