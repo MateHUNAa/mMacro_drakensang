@@ -16,7 +16,7 @@ namespace mMacro.App
             string appFolder = AppDomain.CurrentDomain.BaseDirectory;
             string versionFile = Path.Combine(appFolder, "version.txt");
 
-                string version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0";
+                string version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0.0";
                 File.WriteAllText(versionFile, version);
 
             StartUpdater(appFolder);
@@ -55,6 +55,7 @@ namespace mMacro.App
             {
                 try
                 {
+                    Console.WriteLine("Starting 'Update.exe' !");
                     System.Diagnostics.Process.Start(updaterPath);
                 } catch(Exception ex)
                 {

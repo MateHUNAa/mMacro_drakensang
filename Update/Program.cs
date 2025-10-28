@@ -18,7 +18,16 @@ namespace Update
             string versionFile = Path.Combine(appFolder, "version.txt");
             string repo = "MateHUNAa/mMacro_dso";
 
-            string currentVersion = File.Exists(versionFile) ? File.ReadAllText(versionFile).Trim() : "0.0.0";
+            string currentVersion = File.Exists(versionFile) ? File.ReadAllText(versionFile).Trim() : "0.0.0.0";
+
+            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            string logfile = Path.Combine(appFolder, $"update_log_{timestamp}.txt");
+
+            using var logWriter = new StreamWriter(logfile, append: false);
+            using var multiWriter = new MultiTextWriter(Console.Out, logWriter);
+            Console.SetOut(multiWriter);
+
+            Console.WriteLine($"=== mMacro Updater started at {DateTime.Now} ===");
 
             using HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "mMacro-Update");
@@ -46,7 +55,7 @@ namespace Update
              JObject root = JObject.Parse(response);
 
             string latestVersion = root.Value<string>("tag_name");
-            var match = Regex.Match(latestVersion ?? "", @"\d+\.\d+\.\d+");
+            var match = Regex.Match(latestVersion ?? "", @"\d+\.\d+\.\d+(?:\.\d+)?");
             if (!match.Success) return;
             latestVersion = match.Value;
 
@@ -86,9 +95,6 @@ namespace Update
 
             string netFolder = Directory.GetDirectories(tempExtract, "net8.0-windows", SearchOption.AllDirectories).FirstOrDefault();
             if (netFolder == null) throw new Exception("net8.0-windows folder not found in ZIP!");
-
-
-
 
             KillMainIfRunning(mainExe);
 
@@ -140,6 +146,7 @@ namespace Update
             string exeName = Path.GetFileNameWithoutExtension(mainExeName);
             var processes = Process.GetProcessesByName(exeName);
 
+            Console.WriteLine("Trying to kill the main process;");
             foreach (var proc in processes)
             {
                 try
