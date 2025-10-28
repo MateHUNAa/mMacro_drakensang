@@ -1,6 +1,7 @@
 ﻿using mMacro.Core.Models;
 using System;
 using System.Windows.Forms;
+using ImGuiNET;
 
 namespace mMacro.Core.Managers
 {
@@ -86,9 +87,44 @@ namespace mMacro.Core.Managers
         }
 
         public abstract void Execute();
+
+
+        /// <summary>
+        /// Draws UI for activation
+        /// </summary>
+        public void DrawActivation()
+        {
+            switch (ExecutionType)
+            {
+                case ExecutionType.Toggleable:
+                    DrawToggle();
+                    break;
+                case ExecutionType.RunOnce:
+                    DrawExecute();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Draws toggle button ( for toggleable )
+        /// </summary>
+        protected virtual void DrawToggle()
+        {
+            if (ImGui.Button(Enabled ? $"Disable {Name}" : $"Enable {Name}"))
+                Toggle();
+        }
+
+        /// <summary>
+        /// Draw execute button ( for run once )
+        /// </summary>
+        protected virtual void DrawExecute()
+        {
+            if (ImGui.Button($"Execute {Name}"))
+                Execute();
+        }
+
     }
 
-    // Optional singleton wrapper
     public abstract class SingletonMacroFunction<T> : MacroFunction
         where T : SingletonMacroFunction<T>, new()
     {

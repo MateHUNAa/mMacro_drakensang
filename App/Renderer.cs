@@ -656,6 +656,8 @@ namespace mMacro.App
                     editSession.Active = true;
                 }
 
+                reviveBot.DrawActivation();
+
                 ImGui.SeparatorText("Block Offers");
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip("Prevents automatically sending revive offers to the selected player.");
