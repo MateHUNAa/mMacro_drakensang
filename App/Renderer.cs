@@ -27,8 +27,16 @@ namespace mMacro.App
 
         public bool IsVisible { get; set; } = true;
 
+        private string ConfigDirectory { get; set; }
+        private string ConfigFile { get; set; } 
         protected override Task PostInitialized()
         {
+           
+            ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "mMacro_dso");
+            ConfigFile = Path.Combine(ConfigDirectory, "imgui.ini");
+
+            ImGui.LoadIniSettingsFromDisk(ConfigFile);
+
             KeybindManager.Instance.Register("Toggle Panel", Keys.Insert, () => IsVisible =!IsVisible);
 
             EvtRevive.OnRequestSaveFirstPlayer += () =>
@@ -44,9 +52,16 @@ namespace mMacro.App
                 editSession.Active = true;
             };
 
+            AppDomain.CurrentDomain.ProcessExit +=OnApplicationExit;
+
             return base.PostInitialized();
         }
- 
+
+        private void OnApplicationExit(object? sender, EventArgs e)
+        {
+            ImGui.SaveIniSettingsToDisk(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "mMacro_dso", "imgui.ini"));
+        }
+
         protected override void Render()
         {
             var io = ImGui.GetIO();
@@ -75,9 +90,10 @@ namespace mMacro.App
 
             ImGui.Begin("mMacro - Drakensang", ImGuiWindowFlags.NoBringToFrontOnFocus);
 
-            if (ImGui.BeginTabBar("MainTabs"))
+            if (ImGui.BeginTabBar("MainTabs", ImGuiTabBarFlags.Reorderable))
             {
- 
+
+                uiGeneral.Draw();
                 uiKeybinds.Draw();
 
                 swapCapeUI.Draw();
@@ -91,7 +107,11 @@ namespace mMacro.App
 
                 if (ImGui.BeginTabItem("Menu Style"))
                 {
+                    ImGui.TextColored(new Vector4(1, 0, 0, 1), "Saveing is not completed !");
                     ImGui.ShowStyleEditor();
+                    if (ImGui.Button("Save Style", new Vector2(ImGui.GetContentRegionAvail().X, 0)))
+                        ImGui.SaveIniSettingsToDisk(ConfigFile);
+
                     ImGui.EndTabItem();
                 }
 
