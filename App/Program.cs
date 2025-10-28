@@ -32,7 +32,17 @@ namespace mMacro.App
             MeltItems meltBot         = MeltItems.Instance;
             MeltGems metlGem         = MeltGems.Instance;
             AutoClicker autoClicker     = new AutoClicker();
-            Renderer renderer           = new Renderer();
+
+            int totalWidth =0;
+            int totalHeight=0;
+
+            foreach (var screen in Screen.AllScreens)
+            {
+                totalWidth += screen.Bounds.Width;
+                totalHeight += screen.Bounds.Height;
+            }
+
+            Renderer renderer           = new Renderer(totalWidth, totalHeight);
 
 
             Thread renderThread = new Thread(new ThreadStart(renderer.Start().Wait));
