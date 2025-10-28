@@ -1,4 +1,5 @@
-﻿using mMacro.Core.Managers;
+﻿using Core.Attributes;
+using mMacro.Core.Managers;
 using mMacro.Core.Models;
 using mMacro.Core.Utils;
 using System.Numerics;
@@ -21,6 +22,22 @@ namespace mMacro.Core.Functions
         {
             m_config = ConfigManager.Load();
             FirstPlayerPos = m_config.FirstPlayerPos;
+        }
+
+        [Button(label: "Test", inline: true)]
+        private void Test()
+        {
+            Console.WriteLine("Anyad");
+        }
+        [Button(label: "Test2", inline: true)]
+        private void Test2()
+        {
+            Console.WriteLine("Anyad2");
+        }
+        [Button(label: "Test3", inline: true)]
+        private void Test3()
+        {
+            Console.WriteLine("Anyad3");
         }
 
         public void ClearOfferedRevives()

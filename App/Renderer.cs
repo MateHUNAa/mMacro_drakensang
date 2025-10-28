@@ -1,4 +1,5 @@
 ﻿using App.UI;
+using App.UI.Renderers;
 using ClickableTransparentOverlay;
 using ImGuiNET;
 using mMacro.Core.Functions;
@@ -642,6 +643,9 @@ namespace mMacro.App
         {
             if(ImGui.BeginTabItem("Revive Bot"))
             {
+                ImGui.SeparatorText("Activation");
+                reviveBot.DrawActivation();
+
                 ImGui.SeparatorText("Setup");
 
                 if(ImGui.Button("Save pos", new Vector2(ImGui.GetContentRegionAvail().X, 0)))
@@ -655,6 +659,8 @@ namespace mMacro.App
                     };
                     editSession.Active = true;
                 }
+
+                reviveBot.DrawCustomButtons();
 
                 ImGui.SeparatorText("Block Offers");
                 if (ImGui.IsItemHovered())

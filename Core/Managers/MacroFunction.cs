@@ -1,6 +1,4 @@
 ﻿using mMacro.Core.Models;
-using System;
-using System.Windows.Forms;
 
 namespace mMacro.Core.Managers
 {
@@ -19,7 +17,6 @@ namespace mMacro.Core.Managers
         RunOnce // Executes once per trigger
     }
 
-    // Base class without singleton
     public abstract class MacroFunction
     {
         public string Name { get; }
@@ -88,7 +85,6 @@ namespace mMacro.Core.Managers
         public abstract void Execute();
     }
 
-    // Optional singleton wrapper
     public abstract class SingletonMacroFunction<T> : MacroFunction
         where T : SingletonMacroFunction<T>, new()
     {
