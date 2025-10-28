@@ -1,30 +1,4 @@
 # 🧠 Sell Bot, SwapCape & Revive Bot
-
-<!-- Tab-like sections using details -->
-<style>
-summary {
-  cursor: pointer;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-bottom: none;
-  border-radius: 6px 6px 0 0;
-  background-color: #f1f1f1;
-  font-weight: bold;
-  display: inline-block;
-  margin-right: 4px;
-}
-details[open] summary {
-  background-color: #ffffff;
-  border-bottom: 1px solid #ffffff;
-}
-details {
-  margin-bottom: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 8px;
-}
-</style>
-
 <details open>
 <summary>📖 Readme</summary>
 
