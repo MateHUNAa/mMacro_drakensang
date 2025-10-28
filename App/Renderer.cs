@@ -642,6 +642,9 @@ namespace mMacro.App
         {
             if(ImGui.BeginTabItem("Revive Bot"))
             {
+                ImGui.SeparatorText("Activation");
+                reviveBot.DrawActivation();
+
                 ImGui.SeparatorText("Setup");
 
                 if(ImGui.Button("Save pos", new Vector2(ImGui.GetContentRegionAvail().X, 0)))
@@ -656,7 +659,7 @@ namespace mMacro.App
                     editSession.Active = true;
                 }
 
-                reviveBot.DrawActivation();
+                reviveBot.DrawSetup();
 
                 ImGui.SeparatorText("Block Offers");
                 if (ImGui.IsItemHovered())

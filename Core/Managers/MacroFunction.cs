@@ -2,6 +2,9 @@
 using System;
 using System.Windows.Forms;
 using ImGuiNET;
+using System.Reflection;
+using Core.Attributes;
+using System.Numerics;
 
 namespace mMacro.Core.Managers
 {
@@ -105,12 +108,72 @@ namespace mMacro.Core.Managers
             }
         }
 
+        public void DrawSetup()
+        {
+            DrawCustomButtons();
+        }
+        public void DrawCustomButtons()
+        {
+            var methods = GetType().GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)
+                .Where(m => m.GetCustomAttribute<ButtonAttribute>() != null).ToArray();
+
+            if (methods.Length == 0) return;
+
+            int i = 0;
+            float rowMargin = 8f;
+
+            while (i < methods.Length)
+            {
+                var method = methods[i];
+                var attr = method.GetCustomAttribute<ButtonAttribute>();
+                int columns = Math.Max(1, attr.Columns); // default columns
+                int buttonsLeft = methods.Length - i;
+
+                bool isLastRow = buttonsLeft < columns;
+                int buttonsInRow = isLastRow ? buttonsLeft : columns;
+
+                // Compute total width for the row
+                float totalWidth = ImGui.GetContentRegionAvail().X;
+                if (!isLastRow)
+                    totalWidth -= rowMargin; // only subtract margin for full rows
+
+                float buttonWidth = totalWidth / buttonsInRow;
+
+                for (int j = 0; j < buttonsInRow; j++)
+                {
+                    var m = methods[i + j];
+                    var a = m.GetCustomAttribute<ButtonAttribute>();
+                    string label = a.Label ?? m.Name;
+
+                    Vector2 size = a.Inline ? new Vector2(buttonWidth, a.Height) : a.Size;
+
+                    if (ImGui.Button(label, size))
+                    {
+                        m.Invoke(this, null);
+                    }
+
+                    // SameLine for all buttons except the last in the row
+                    if (j < buttonsInRow - 1)
+                        ImGui.SameLine();
+                }
+
+                // Only add row margin for full rows
+                if (!isLastRow)
+                {
+                    ImGui.SameLine();
+                    ImGui.Dummy(new Vector2(rowMargin, 0));
+                }
+
+                i += buttonsInRow;
+            }
+        }
+
         /// <summary>
         /// Draws toggle button ( for toggleable )
         /// </summary>
         protected virtual void DrawToggle()
         {
-            if (ImGui.Button(Enabled ? $"Disable {Name}" : $"Enable {Name}"))
+            if (ImGui.Button(Enabled ? $"Disable {Name}" : $"Enable {Name}", new Vector2(ImGui.GetContentRegionAvail().X,0)))
                 Toggle();
         }
 
@@ -119,7 +182,7 @@ namespace mMacro.Core.Managers
         /// </summary>
         protected virtual void DrawExecute()
         {
-            if (ImGui.Button($"Execute {Name}"))
+            if (ImGui.Button($"Execute {Name}", new Vector2(ImGui.GetContentRegionAvail().X, 0)))
                 Execute();
         }
 
