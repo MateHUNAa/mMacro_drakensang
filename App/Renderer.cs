@@ -1,6 +1,7 @@
 ﻿using App.UI;
 using App.UI.Renderers;
 using ClickableTransparentOverlay;
+using Core.Events;
 using ImGuiNET;
 using mMacro.Core.Functions;
 using mMacro.Core.Functions.Inventory;
@@ -58,9 +59,23 @@ namespace mMacro.App
             m_config = ConfigManager.Load();
             delay = m_config.ClickDelay;
             KeybindManager.Instance.Register("Toggle Panel", Keys.Insert, () => IsVisible =!IsVisible);
+
+            EvtRevive.OnRequestSaveFirstPlayer += () =>
+            {
+                editSession.Mode = EditMode.Player;
+                editSession.Radius = reviveBot.Radius;
+                editSession.OnSet = (pos) =>
+                {
+                    reviveBot.FirstPlayerPos = pos;
+                    m_config.FirstPlayerPos = pos;
+                    EvtRevive.RaisePlayerPositionSet(pos);
+                };
+                editSession.Active = true;
+            };
+
             return base.PostInitialized();
         }
-
+        
         private void SaveConfig() => ConfigManager.Save(m_config ?? throw new Exception("SaveConfig called without it being intialized;"));
         /// <inheritdoc/>
         protected override void Render()
@@ -647,18 +662,6 @@ namespace mMacro.App
                 reviveBot.DrawActivation();
 
                 ImGui.SeparatorText("Setup");
-
-                if(ImGui.Button("Save pos", new Vector2(ImGui.GetContentRegionAvail().X, 0)))
-                {
-                    editSession.Mode= EditMode.Player;
-                    editSession.Radius = reviveBot.Radius;
-                    editSession.OnSet = (pos) =>
-                    {
-                        reviveBot.FirstPlayerPos = pos;
-                        m_config.FirstPlayerPos= pos;
-                    };
-                    editSession.Active = true;
-                }
 
                 reviveBot.DrawCustomButtons();
 

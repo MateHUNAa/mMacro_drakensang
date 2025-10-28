@@ -1,4 +1,5 @@
 ﻿using Core.Attributes;
+using Core.Events;
 using mMacro.Core.Managers;
 using mMacro.Core.Models;
 using mMacro.Core.Utils;
@@ -24,20 +25,10 @@ namespace mMacro.Core.Functions
             FirstPlayerPos = m_config.FirstPlayerPos;
         }
 
-        [Button(label: "Test", inline: true)]
-        private void Test()
+        [Button(label: "Save First Player", inline: true)]
+        private void SaveFirstPlayer()
         {
-            Console.WriteLine("Anyad");
-        }
-        [Button(label: "Test2", inline: true)]
-        private void Test2()
-        {
-            Console.WriteLine("Anyad2");
-        }
-        [Button(label: "Test3", inline: true)]
-        private void Test3()
-        {
-            Console.WriteLine("Anyad3");
+            EvtRevive.RaiseRequestSaveFirstPlayer();
         }
 
         public void ClearOfferedRevives()
