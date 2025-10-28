@@ -1,4 +1,5 @@
 ﻿using App.UI;
+using App.UI.Renderers;
 using ClickableTransparentOverlay;
 using ImGuiNET;
 using mMacro.Core.Functions;
@@ -659,7 +660,7 @@ namespace mMacro.App
                     editSession.Active = true;
                 }
 
-                reviveBot.DrawSetup();
+                reviveBot.DrawCustomButtons();
 
                 ImGui.SeparatorText("Block Offers");
                 if (ImGui.IsItemHovered())
