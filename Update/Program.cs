@@ -111,7 +111,7 @@ namespace Update
             Process.Start(mainExe);
             Console.WriteLine("Update applied and app restarted.");
 
-            Console.ReadLine();
+            Console.WriteLine($"=== Update finished successfully at {DateTime.Now} ===");
             return;
         }
         static bool IsNewerVersion(string current, string latest)
