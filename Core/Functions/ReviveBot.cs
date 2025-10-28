@@ -21,6 +21,7 @@ namespace mMacro.Core.Functions
         public float Radius = 21f;
         public int Offset = 67;
         public ColorRange ReviveColor = new ColorRange { R = (47, 57), G = (56, 66), B = (50, 60) };
+
         public ReviveBot() : base("Revive Bot", Keys.None, ActivationMode.MenuOnly, ExecutionType.Toggleable)
         {
             m_config = ConfigManager.Load();
@@ -32,7 +33,19 @@ namespace mMacro.Core.Functions
             for (int i = 1; i<5; i++) m_reviveOffered[i] = false;
         }
 
-        private async void SendRevive()
+        private async void SendRevive(int playerNum)
+        {
+            float x = FirstPlayerPos.X;
+            float y = FirstPlayerPos.Y + Offset * playerNum;
+
+            m_reviveOffered[playerNum] = true;
+            Point oldPos = Cursor.Position;
+
+            await Click.ClickAtAsync(new Vector2(x, y), 90, ClickType.LEFT);
+
+            Cursor.Position = oldPos;
+        }
+        public override void Execute()
         {
             for (int i = 1; i<5; i++)
             {
@@ -40,17 +53,10 @@ namespace mMacro.Core.Functions
                 float y = FirstPlayerPos.Y + Offset * i;
 
                 bool needRevive = CheckPixel(GetPixelColor(x, y), ReviveColor);
-                //Console.WriteLine($"Player {i} Needs revive");
 
-                //Console.WriteLine($"Player {i}, NeedRevive: {needRevive}, offered?: {m_reviveOffered[i]}, blocked?: {m_blockOffers[i]}");
                 if (needRevive && !m_reviveOffered[i] && !m_blockOffers[i])
                 {
-                    m_reviveOffered[i] = true;
-                    Point oldPos = Cursor.Position;
-
-                   await Click.ClickAtAsync(new Vector2(x,y), 90, ClickType.LEFT);
-
-                    Cursor.Position = oldPos;
+                    SendRevive(i);
                 }
                 else if (!needRevive && m_reviveOffered[i])
                 {
@@ -58,10 +64,7 @@ namespace mMacro.Core.Functions
                     m_reviveOffered[i] = false;
                 }
             }
-        }
-        public override void Execute()
-        {
-            SendRevive();
+
             Task.Delay(500);
         }
     }
