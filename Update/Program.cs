@@ -17,10 +17,10 @@ namespace Update
             string mainExe = Path.Combine(appFolder, "App.exe");
             string versionFile = Path.Combine(appFolder, "version.txt");
             string repo = "MateHUNAa/mMacro_dso";
-
             string currentVersion = File.Exists(versionFile) ? File.ReadAllText(versionFile).Trim() : "0.0.0.0";
 
-            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+
+            string timestamp = DateTime.Now.ToString("yyyyMMdd");
             string logfile = Path.Combine(appFolder, $"update_log_{timestamp}.txt");
 
             using var logWriter = new StreamWriter(logfile, append: false);

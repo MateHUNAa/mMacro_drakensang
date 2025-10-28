@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace Update
 {
@@ -19,13 +15,13 @@ namespace Update
         public override void WriteLine(string? value)
         {
             foreach (var writer in writers)
-                writer.WriteLine(value);
+                writer.WriteLine($"[{getCurrentTime()}] {value}");
         }
 
         public override void Write(char value)
         {
             foreach (var writer in writers)
-                writer.Write(value);
+                writer.Write($"{value}");
         }
 
         protected override void Dispose(bool disposing)
@@ -33,9 +29,17 @@ namespace Update
             if (disposing)
             {
                 foreach (var writer in writers)
+                {
                     writer.Flush();
+                    writer.Dispose();
+                }
             }
             base.Dispose(disposing);
+        }
+
+        private string getCurrentTime()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         }
     }
 }
