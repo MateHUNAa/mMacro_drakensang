@@ -35,6 +35,7 @@ namespace mMacro.App
         private bool DebugMode = true;
         private bool DebugDraw = false;
         private EditSession editSession = new EditSession();
+        private ColorPicker colorPicker = new ColorPicker();
         private enum EditMode
         {
             None,
@@ -42,7 +43,8 @@ namespace mMacro.App
             Bag,
             SetClose,
             Player,
-            MeltBot
+            MeltBot,
+            ColorPicker
         }
 
         private bool showOverlay = true;
@@ -280,6 +282,19 @@ namespace mMacro.App
                                 ImGui.SetClipboardText(codeSnippet);
                             }, EditMode.FirstCell, Color.FromArgb(1, 1, 0, 1), inventoryScan.CellSize);
                         }
+
+                        colorPicker.Toggle((bool toggled) => {
+                            Console.WriteLine("TOGGLE");
+                            if (toggled)
+                            {
+                                editSession.Mode = EditMode.ColorPicker;
+                                editSession.Active = true;
+                            } else
+                            {
+                                editSession.Mode = EditMode.None;
+                                editSession.Active = false;
+                            }
+                        });
 
                         if (ImGui.Button("Get Colors"))
                         {
@@ -839,6 +854,9 @@ namespace mMacro.App
                     break;
                 case EditMode.Player:
                     DrawCursorCircle(mousePos, editSession.Radius, editSession.Color); 
+                    break;
+                case EditMode.ColorPicker:
+                    colorPicker.Draw(ImGui.GetIO());
                     break;
             }
 
