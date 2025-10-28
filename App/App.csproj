@@ -9,7 +9,7 @@
 	<UseWPF>False</UseWPF>
 	<StartupObject>mMacro.App.Program</StartupObject>
 	<GenerateDocumentationFile>False</GenerateDocumentationFile>
-	<Version>1.2.4.2</Version>
+	<Version>1.2.4.4</Version>
 	  <OutputPath>bin\Release\Release v$(Version)\</OutputPath>
   </PropertyGroup>
 	
