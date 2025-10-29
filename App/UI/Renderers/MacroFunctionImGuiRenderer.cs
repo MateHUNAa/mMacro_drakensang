@@ -1,4 +1,5 @@
 ﻿using Core.Attributes;
+using Core.Attributes.Interface;
 using ImGuiNET;
 using mMacro.Core.Managers;
 using System.Numerics;
@@ -14,8 +15,7 @@ namespace App.UI.Renderers
         {
             var methods = macro.GetType()
                 .GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)
-                .Where(m => m.GetCustomAttribute<ButtonAttribute>() != null)
-                .ToArray();
+                .Where(m => m.GetCustomAttributes().OfType<IButtonTemplate>().Any()).ToArray();
 
             if (methods.Length == 0) return;
 
@@ -25,7 +25,14 @@ namespace App.UI.Renderers
             while (i < methods.Length)
             {
                 var method = methods[i];
-                var attr = method.GetCustomAttribute<ButtonAttribute>();
+                var attr = method.GetCustomAttributes().OfType<IButtonTemplate>().FirstOrDefault();
+
+                if (attr == null)
+                {
+                    i++;
+                    continue;
+                }
+
                 int columns = Math.Max(1, attr.Columns); // default columns
                 int buttonsLeft = methods.Length - i;
 
@@ -40,13 +47,24 @@ namespace App.UI.Renderers
                 for (int j = 0; j < buttonsInRow; j++)
                 {
                     var m = methods[i + j];
-                    var a = m.GetCustomAttribute<ButtonAttribute>();
-                    string label = a.Label ?? m.Name;
+                    string label = attr.Label ?? m.Name;
 
-                    Vector2 size = a.Inline ? new Vector2(buttonWidth, a.Height) : a.Size;
+                    Vector2 size = attr.Inline ? new Vector2(buttonWidth, attr.Height) : attr.Size;
 
                     if (ImGui.Button(label, size))
-                        m.Invoke(macro, null);
+                    {
+                        switch (attr)
+                        {
+                            case DragButtonAttribute:
+                                break;
+                            case ButtonAttribute:
+                                m.Invoke(macro, null);
+                                break;
+                            default:
+                                Console.WriteLine($"{m.Name} Does not have a valid Attribute !");
+                                break;
+                        }
+                    }
 
                     if (j < buttonsInRow - 1)
                         ImGui.SameLine();

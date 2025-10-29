@@ -1,4 +1,5 @@
-﻿using ImGuiNET;
+﻿using App.UI.EditSession;
+using ImGuiNET;
 using mMacro.Core.Functions;
 using mMacro.Core.Managers;
 using mMacro.Core.Models;
@@ -8,8 +9,6 @@ namespace App.UI.Features
 {
     public class uiSwapCape
     {
-
-        private readonly EditSession editSession = EditSession.Instance;
         private readonly SwapCape swapCape = SwapCape.Instance;
         private readonly AppConfig m_config = ConfigManager.Load();
         public void Draw()
@@ -20,14 +19,15 @@ namespace App.UI.Features
                 Vector2 buttonSize = new Vector2(ImGui.GetContentRegionAvail().X, 0);
                 if (ImGui.Button("Set Close Button", buttonSize))
                 {
-                    editSession.Mode = EditMode.SetClose;
-                    editSession.Size = new Vector2(swapCape.CloseButtonScale, swapCape.CloseButtonScale);
-                    editSession.OnSet = (pos) =>
-                    {
-                        swapCape.InventoryCloseButtonPosition = pos;
-                        m_config.ClosePoint = pos;
-                    };
-                    editSession.Active=true;
+                    var session = new ShapeEditSession();
+                    session.Start(
+                        shape: ShapeType.Square,
+                        size: new Vector2(swapCape.CloseButtonScale),
+                        onSet: pos => {
+                            swapCape.InventoryCloseButtonPosition = pos;
+                            EditSessionManager.Instance.GetConfig().ClosePoint = pos;
+                        });
+                    EditSessionManager.Instance.StartSession(session);
                 }
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip("Click to save the in-game close button position.");

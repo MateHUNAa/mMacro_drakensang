@@ -1,4 +1,5 @@
-﻿using mMacro.Core.Functions;
+﻿using App.UI.EditSession;
+using mMacro.Core.Functions;
 using mMacro.Core.Functions.Inventory;
 using mMacro.Core.Managers;
 using System.Reflection;

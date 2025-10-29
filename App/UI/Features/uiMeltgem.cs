@@ -1,4 +1,5 @@
-﻿using ImGuiNET;
+﻿using App.UI.EditSession;
+using ImGuiNET;
 using mMacro.Core.Functions.Inventory;
 using mMacro.Core.Managers;
 using mMacro.Core.Models;
@@ -8,7 +9,6 @@ namespace App.UI.Features
 {
     public class uiMeltgem
     {
-        private EditSession editSession = EditSession.Instance;
         private readonly AppConfig m_config = ConfigManager.Load();
 
         public void Draw()
@@ -22,55 +22,79 @@ namespace App.UI.Features
 
                     if (ImGui.Button("Potion Tab", buttonSize))
                     {
-                        editSession.StartEditSession(editSession, (pos) =>
-                        {
-                            MeltGems.Instance.Positions.PotionPosition = pos;
-                            m_config.CraftPositions.PotionPosition = pos;
-                        }, EditMode.FirstCell, Color.FromArgb(255, 255, 0, 0), new Vector2(100, 55));
+                        var session = new ShapeEditSession();
+                        session.Start(
+                            shape: ShapeType.Square,
+                            color: new Vector4(255,0,0,255),
+                            onSet: (pos) => {
+                                MeltGems.Instance.Positions.PotionPosition = pos;
+                                EditSessionManager.Instance.GetConfig().CraftPositions.PotionPosition = pos;
+                            },
+                            size: new Vector2(100, 55));
+                        EditSessionManager.Instance.StartSession(session);
                     }
                     if (ImGui.IsItemHovered())
                         ImGui.SetTooltip("Select the Potion tab in the workbench");
                     ImGui.SameLine();
                     if (ImGui.Button("Max Arrow", buttonSize))
                     {
-                        editSession.StartEditSession(editSession, (pos) =>
-                        {
-                            MeltGems.Instance.Positions.MaxBtnPosition = pos;
-                            m_config.CraftPositions.MaxBtnPosition = pos;
-                        }, EditMode.FirstCell, Color.FromArgb(255, 255, 0, 0), new Vector2(35, 15));
-
+                        var session = new ShapeEditSession();
+                        session.Start(
+                            shape: ShapeType.Square,
+                            color: new Vector4(255, 0, 0, 255),
+                            onSet: (pos) => {
+                                MeltGems.Instance.Positions.MaxBtnPosition = pos;
+                                EditSessionManager.Instance.GetConfig().CraftPositions.MaxBtnPosition = pos;
+                            },
+                            size: new Vector2(35, 15));
+                        EditSessionManager.Instance.StartSession(session);
                     }
                     if (ImGui.IsItemHovered())
                         ImGui.SetTooltip("Select the Max Arrow in the workbench");
                     ImGui.SameLine();
                     if (ImGui.Button("Minus Arrow", buttonSize))
                     {
-                        editSession.StartEditSession(editSession, (pos) =>
-                        {
-                            MeltGems.Instance.Positions.MinusBtnPosition = pos;
-                            m_config.CraftPositions.MinusBtnPosition = pos;
-                        }, EditMode.FirstCell, Color.FromArgb(255, 255, 0, 0), 18);
+                        var session = new ShapeEditSession();
+                        session.Start(
+                            shape: ShapeType.Square,
+                            color: new Vector4(255, 0, 0, 255),
+                            onSet: (pos) => {
+                                MeltGems.Instance.Positions.MinusBtnPosition = pos;
+                                EditSessionManager.Instance.GetConfig().CraftPositions.MinusBtnPosition = pos;
+                            },
+                            size: new Vector2(18, 18));
+                        EditSessionManager.Instance.StartSession(session);
                     }
                     if (ImGui.IsItemHovered())
                         ImGui.SetTooltip("Select the Minus Arrow in the workbench");
                     ImGui.SameLine();
                     if (ImGui.Button("Exit Button", buttonSize))
                     {
-                        editSession.StartEditSession(editSession, (pos) =>
-                        {
-                            MeltGems.Instance.Positions.ClosePosition = pos;
-                            m_config.CraftPositions.ClosePosition = pos;
-                        }, EditMode.FirstCell, Color.FromArgb(255, 0, 255, 0), 25);
+                        var session = new ShapeEditSession();
+                        session.Start(
+                            shape: ShapeType.Square,
+                            color: new Vector4(255, 0, 0, 255),
+                            onSet: (pos) => {
+                                MeltGems.Instance.Positions.ClosePosition = pos;
+                                EditSessionManager.Instance.GetConfig().CraftPositions.ClosePosition = pos;
+                            },
+                            size: new Vector2(25, 25));
+                        EditSessionManager.Instance.StartSession(session);
                     }
                     if (ImGui.IsItemHovered())
                         ImGui.SetTooltip("Select the Exit Cross in the workbench");
                     if (ImGui.Button("Combine Button", new Vector2(ImGui.GetContentRegionAvail().X, 0)))
                     {
-                        editSession.StartEditSession(editSession, (pos) =>
-                        {
-                            MeltGems.Instance.Positions.CombinePosition = pos;
-                            m_config.CraftPositions.CombinePosition = pos;
-                        }, EditMode.FirstCell, Color.FromArgb(255, 0, 255, 0), new Vector2(180, 45));
+                        var session = new ShapeEditSession();
+                        session.Start(
+                            shape: ShapeType.Square,
+                            color: new Vector4(255, 0, 0, 255),
+                            onSet: (pos) => {
+                                MeltGems.Instance.Positions.CombinePosition = pos;
+                                EditSessionManager.Instance.GetConfig().CraftPositions.CombinePosition = pos;
+                            },
+                            size: new Vector2(180, 45));
+                        EditSessionManager.Instance.StartSession(session);
                     }
                     if (ImGui.IsItemHovered())
                         ImGui.SetTooltip("Select the 'Combine' button in the workbench");

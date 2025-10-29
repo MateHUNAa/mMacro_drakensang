@@ -1,4 +1,5 @@
-﻿using ImGuiNET;
+﻿using App.UI.EditSession;
+using ImGuiNET;
 using mMacro.Core.Functions.Inventory;
 using mMacro.Core.Managers;
 using mMacro.Core.Models;
@@ -10,7 +11,6 @@ namespace App.UI.Features
 {
     public class uiSellbot
     {
-        private EditSession editSession         = EditSession.Instance;
         private readonly AppConfig m_config     = ConfigManager.Load();
         private readonly Sellbot inventoryScan  = Sellbot.Instance;
 
@@ -25,28 +25,31 @@ namespace App.UI.Features
                     Vector2 buttonSize = new Vector2(ImGui.GetContentRegionAvail().X / 2 -5, 0);
                     if (ImGui.Button("Set First Cell", buttonSize))
                     {
-                        editSession.Mode = EditMode.FirstCell;
-                        editSession.Size = new Vector2(inventoryScan.CellSize, inventoryScan.CellSize);
-                        editSession.OnSet = (pos) =>
-                        {
-                            inventoryScan.firstCellPos = pos;
-                            m_config.FirstCellPosition = pos;
-                        };
-                        editSession.Active =true;
+                        var session = new ShapeEditSession();
+                        session.Start(
+                            shape: ShapeType.Square,
+                            size: new Vector2(inventoryScan.CellSize, inventoryScan.CellSize),
+                            onSet: pos => {
+                                inventoryScan.firstCellPos = pos;
+                                EditSessionManager.Instance.GetConfig().FirstCellPosition = pos;
+                            });
+                        EditSessionManager.Instance.StartSession(session);
                     }
                     if (ImGui.IsItemHovered())
                         ImGui.SetTooltip("Select the first cell of the inventory");
                     ImGui.SameLine();
                     if (ImGui.Button("Set Bag", buttonSize))
                     {
-                        editSession.Mode = EditMode.Bag;
-                        editSession.Size = new Vector2(inventoryScan.BagSize, inventoryScan.BagSize);
-                        editSession.OnSet = (pos) =>
-                        {
-                            inventoryScan.firstBagPos = pos;
-                            m_config.FirstBagPosition = pos;
-                        };
-                        editSession.Active =true;
+
+                        var session = new ShapeEditSession();
+                        session.Start(
+                            shape: ShapeType.Square,
+                            size: new Vector2(inventoryScan.BagSize, inventoryScan.BagSize),
+                            onSet: pos => {
+                                inventoryScan.firstBagPos = pos;
+                                EditSessionManager.Instance.GetConfig().FirstBagPosition = pos;
+                            });
+                        EditSessionManager.Instance.StartSession(session);
                     }
                     if (ImGui.IsItemHovered())
                         ImGui.SetTooltip("Select the first bag");
@@ -96,21 +99,28 @@ namespace App.UI.Features
 
                     if (ImGui.ColorButton(name, avgColor))
                     {
-                        editSession.StartEditSession(editSession, (pos) => {
-                            Color pickedColor = PixelUtils.GetPixelColor(pos);
 
-                            avgColor = new Vector4(
-                                pickedColor.R,
-                                pickedColor.G,
-                                pickedColor.B,
-                                pickedColor.A
-                            );
-                            var range = inventoryScan.ColorRanges[kvp.Key];
-                            range.R = (Math.Min(range.R.Min, pickedColor.R)-5, Math.Max(range.R.Max, pickedColor.R)+5);
-                            range.G = (Math.Min(range.G.Min, pickedColor.G)-5, Math.Max(range.G.Max, pickedColor.G)+5);
-                            range.B = (Math.Min(range.B.Min, pickedColor.B)-5, Math.Max(range.B.Max, pickedColor.B) + 5);
-                            inventoryScan.ColorRanges[kvp.Key] = range;
-                        }, EditMode.FirstCell, Color.FromArgb(1, 1, 0, 1), inventoryScan.CellSize);
+                        var session = new ShapeEditSession();
+                        session.Start(
+                            shape: ShapeType.Square,
+                            size: new Vector2(inventoryScan.CellSize, inventoryScan.CellSize),
+                            color: new Vector4(255,0,255,255),
+                            onSet: pos => {
+                                Color pickedColor = PixelUtils.GetPixelColor(pos);
+
+                                avgColor = new Vector4(
+                                    pickedColor.R,
+                                    pickedColor.G,
+                                    pickedColor.B,
+                                    pickedColor.A
+                                );
+                                var range = inventoryScan.ColorRanges[kvp.Key];
+                                range.R = (Math.Min(range.R.Min, pickedColor.R)-5, Math.Max(range.R.Max, pickedColor.R)+5);
+                                range.G = (Math.Min(range.G.Min, pickedColor.G)-5, Math.Max(range.G.Max, pickedColor.G)+5);
+                                range.B = (Math.Min(range.B.Min, pickedColor.B)-5, Math.Max(range.B.Max, pickedColor.B) + 5);
+                                inventoryScan.ColorRanges[kvp.Key] = range;
+                            });
+                        EditSessionManager.Instance.StartSession(session);
                     }
                     ImGui.SameLine();
                     ImGui.Text(name);

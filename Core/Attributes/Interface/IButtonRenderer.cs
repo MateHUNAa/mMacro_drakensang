@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Attributes
+namespace Core.Attributes.Interface
 {
     public interface IButtonRenderer
     {

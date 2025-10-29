@@ -16,7 +16,7 @@ namespace Update
             string appFolder = AppDomain.CurrentDomain.BaseDirectory;
             string mainExe = Path.Combine(appFolder, "App.exe");
             string versionFile = Path.Combine(appFolder, "version.txt");
-            string repo = "MateHUNAa/mMacro_dso";
+            string repo = "MateHUNAa/mMacro_drakensang";
             string currentVersion = File.Exists(versionFile) ? File.ReadAllText(versionFile).Trim() : "0.0.0.0";
 
 

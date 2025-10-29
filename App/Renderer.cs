@@ -1,5 +1,6 @@
 ﻿using App.UI;
 using App.UI.Debug;
+using App.UI.EditSession;
 using App.UI.Features;
 using App.UI.Pages;
 using ClickableTransparentOverlay;
@@ -7,7 +8,6 @@ using Core.Events;
 using ImGuiNET;
 using mMacro.Core.Functions;
 using mMacro.Core.Managers;
-using mMacro.Core.Models;
 using System.Numerics;
 
 namespace mMacro.App
@@ -17,8 +17,6 @@ namespace mMacro.App
     {
         public Vector2 screenSize = new Vector2(screenWidth, screenHeight);
         private ReviveBot reviveBot = ReviveBot.Instance;
-        private AppConfig m_config = ConfigManager.Load();
-        private EditSession editSession = EditSession.Instance;
         
         private readonly uiRevive reviveUI          = new uiRevive();
         private readonly uiSwapCape swapCapeUI      = new uiSwapCape();
@@ -31,25 +29,27 @@ namespace mMacro.App
         private string ConfigFile { get; set; } 
         protected override Task PostInitialized()
         {
-           
             ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "mMacro_dso");
             ConfigFile = Path.Combine(ConfigDirectory, "imgui.ini");
 
             ImGui.LoadIniSettingsFromDisk(ConfigFile);
 
             KeybindManager.Instance.Register("Toggle Panel", Keys.Insert, () => IsVisible =!IsVisible);
-
             EvtRevive.OnRequestSaveFirstPlayer += () =>
             {
-                editSession.Mode = EditMode.Player;
-                editSession.Radius = reviveBot.Radius;
-                editSession.OnSet = (pos) =>
-                {
-                    reviveBot.FirstPlayerPos = pos;
-                    m_config.FirstPlayerPos = pos;
-                    EvtRevive.RaisePlayerPositionSet(pos);
-                };
-                editSession.Active = true;
+
+                var session = new ShapeEditSession();
+
+                session.Start(
+                    shape: ShapeType.Circle,
+                    onSet: (pos) =>
+                    {
+                        reviveBot.FirstPlayerPos = pos;
+                        EditSessionManager.Instance.GetConfig().FirstPlayerPos = pos;
+                        EvtRevive.RaisePlayerPositionSet(pos);
+                    },
+                    radius: reviveBot.Radius);
+                EditSessionManager.Instance.StartSession(session);
             };
 
             AppDomain.CurrentDomain.ProcessExit +=OnApplicationExit;
@@ -66,11 +66,11 @@ namespace mMacro.App
         {
             var io = ImGui.GetIO();
             var mousePos = io.MousePos;
-            editSession.HandleEditSession(mousePos);
+            EditSessionManager.Instance.Handle(mousePos);
             ImGui.StyleColorsClassic();
 
             #region EditMode
-            if (editSession.Active)
+            if (EditSessionManager.Instance.CurrentSession != null && EditSessionManager.Instance.CurrentSession.Active)
             {
                 ImGui.SetNextWindowPos(Vector2.Zero);
                 ImGui.SetNextWindowSize(screenSize);
