@@ -1,16 +1,9 @@
-﻿using mMacro.Core.Managers;
+﻿using Core.Attributes.Interface;
 using System.Numerics;
 using static App.UI.DrawShape;
 
 namespace App.UI.EditSession
 {
-    [Flags]
-    public enum ShapeType
-    {
-        None,
-        Circle,
-        Square
-    }
     public class ShapeEditSession : BaseEditSession
     {
         public ShapeType Shape { get; private set; } = ShapeType.None;

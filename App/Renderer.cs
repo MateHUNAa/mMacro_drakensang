@@ -4,6 +4,7 @@ using App.UI.EditSession;
 using App.UI.Features;
 using App.UI.Pages;
 using ClickableTransparentOverlay;
+using Core.Attributes.Interface;
 using Core.Events;
 using ImGuiNET;
 using mMacro.Core.Functions;
@@ -64,9 +65,7 @@ namespace mMacro.App
 
         protected override void Render()
         {
-            var io = ImGui.GetIO();
-            var mousePos = io.MousePos;
-            EditSessionManager.Instance.Handle(mousePos);
+           
             ImGui.StyleColorsClassic();
 
             #region EditMode
@@ -77,6 +76,10 @@ namespace mMacro.App
                 ImGui.Begin("EditMode Overlay", ImGuiWindowFlags.NoTitleBar
                                               | ImGuiWindowFlags.NoBackground
                                               | ImGuiWindowFlags.NoBringToFrontOnFocus);
+                var io = ImGui.GetIO();
+                var mousePos = io.MousePos;
+
+                EditSessionManager.Instance.Handle(mousePos);
                 ImGui.End();
                 return;
             }
@@ -100,6 +103,7 @@ namespace mMacro.App
                 reviveUI.Draw();
                 uiInventory.Draw();
                 settingsUI.Draw();
+                uiUtils.Draw();
 
                 if (DebugPage.DebugMode)
                     DebugPage.Draw();

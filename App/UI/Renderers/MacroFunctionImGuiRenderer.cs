@@ -1,4 +1,5 @@
-﻿using Core.Attributes;
+﻿using App.UI.EditSession;
+using Core.Attributes;
 using Core.Attributes.Interface;
 using ImGuiNET;
 using mMacro.Core.Managers;
@@ -56,6 +57,10 @@ namespace App.UI.Renderers
                         switch (attr)
                         {
                             case DragButtonAttribute:
+                                var session = new DragEditSession(attr.Shape, (start, end) => {
+                                    m.Invoke(macro, new object[] { start ,end });
+                                });
+                                EditSessionManager.Instance.StartSession(session);
                                 break;
                             case ButtonAttribute:
                                 m.Invoke(macro, null);
