@@ -1,9 +1,4 @@
 ﻿using Core.Attributes.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Attributes
 {
@@ -19,13 +14,16 @@ namespace Core.Attributes
 
         public int Columns { get; }
 
-        public DragButtonAttribute(string label = "Drag button", float width = 0, float height = 0, bool inline = true, int columns = 1)
+        public ShapeType Shape { get; }
+
+        public DragButtonAttribute(string label = "Drag button", float width = 0, float height = 0, bool inline = true, int columns = 1, ShapeType shape = ShapeType.Circle)
         {
             Label = label;
             Width = width;
             Height = height;
             Inline = inline;
             Columns = columns;
+            Shape = shape;
         }
     }
 }

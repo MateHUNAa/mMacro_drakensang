@@ -31,10 +31,17 @@ namespace App.UI.EditSession
         {
             if (CurrentSession == null || !CurrentSession.Active) return;
             CurrentSession.Draw(mousePos);
+
             if (ImGui.GetIO().MouseClicked[0])
             {
                 CurrentSession.OnClick(mousePos);
                 ConfigManager.Save(m_config);
+
+            }
+
+            if (CurrentSession is DragEditSession dragSession)
+            {
+                dragSession.HandleDrag(mousePos);
             }
         }
 
