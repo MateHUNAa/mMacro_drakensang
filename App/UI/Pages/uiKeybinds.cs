@@ -11,37 +11,51 @@ namespace App.UI.Pages
         {
             if (ImGui.BeginTabItem("Keybinds"))
             {
-                ImGui.Text("This is the Keybinds tab");
-                ImGui.Separator();
+                float fullWidth = ImGui.GetContentRegionAvail().X;
+                float itemWidth = fullWidth/ 3;
 
-                foreach (var kvp in KeybindManager.Instance.Bindings)
+                float nameRatio = 0.6f;
+                float keyRatio = 0.6f;
+                float buttonRatio = 0.15f;
+
+                float nameWidth = fullWidth * nameRatio;
+                float keyWidth = fullWidth * keyRatio;
+                float buttonWidth = fullWidth * buttonRatio;
+
+
+                if (ImGui.BeginTable("KeybindTable", 3, ImGuiTableFlags.SizingStretchProp))
                 {
-                    string name = kvp.Key;
-                    Keybind bind = kvp.Value;
+                    ImGui.TableSetupColumn("Action", ImGuiTableColumnFlags.WidthStretch, nameWidth);
+                    ImGui.TableSetupColumn("Key", ImGuiTableColumnFlags.WidthStretch, keyWidth);
+                    ImGui.TableSetupColumn("Button", ImGuiTableColumnFlags.WidthStretch, buttonWidth);
 
-                    string keyText = KeybindManager.Instance.FormatKeybind(bind.Modifiers, bind.Key);
-
-                    float fullWidth = ImGui.GetContentRegionAvail().X;
-
-                    float nameWidth = ImGui.CalcTextSize(name).X;
-                    float keyWidth = ImGui.CalcTextSize($"[{keyText}]").X;
-                    float buttonWidth = 80.0f;
-
-                    float spaceing = (fullWidth - (nameWidth + keyWidth + buttonWidth)) /2;
-
-                    ImGui.Text($"{name}");
-                    ImGui.SameLine((float)((nameWidth + spaceing *1.5) /1.5));
-                    ImGui.Text($"[{keyText}]");
-                    ImGui.SameLine(nameWidth + spaceing + keyWidth +spaceing - buttonWidth /2);
-
-                    if (KeybindManager.Instance.IsListening(name))
+                    foreach (var kvp in KeybindManager.Instance.Bindings)
                     {
-                        ImGui.Text("Press any key...");
+                        string name = kvp.Key;
+                        Keybind bind = kvp.Value;
+
+                        string keyText = KeybindManager.Instance.FormatKeybind(bind.Modifiers, bind.Key);
+
+                        ImGui.TableNextRow();
+
+                        ImGui.TableSetColumnIndex(0);
+                        ImGui.TextUnformatted(name);
+
+                        ImGui.TableSetColumnIndex(1);
+                        ImGui.Text($"[{keyText}]");
+
+                        ImGui.TableSetColumnIndex(2);
+                        if (KeybindManager.Instance.IsListening(name))
+                        {
+                            ImGui.Text("Press any key...");
+                        }
+                        else if (ImGui.Button($"Change##{name}", new Vector2(80, 0)))
+                        {
+                            KeybindManager.Instance.StartListening(name);
+                        }
                     }
-                    else if (ImGui.Button($"Change##{name}", new Vector2(buttonWidth, 0)))
-                    {
-                        KeybindManager.Instance.StartListening(name);
-                    }
+
+                    ImGui.EndTable();
                 }
                 ImGui.EndTabItem();
             }
