@@ -1,9 +1,10 @@
-﻿using System.Numerics;
+﻿using Core.Attributes.Interface;
+using System.Numerics;
 
 namespace Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class ButtonAttribute : Attribute
+    public class ButtonAttribute : Attribute, IButtonTemplate
     {
         public string Label { get; }
         public float Width { get; }

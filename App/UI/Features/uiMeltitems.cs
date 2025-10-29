@@ -1,19 +1,14 @@
-﻿using ImGuiNET;
+﻿using App.UI.EditSession;
+using ImGuiNET;
 using mMacro.Core.Functions.Inventory;
 using mMacro.Core.Managers;
 using mMacro.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace App.UI.Features
 {
     public class uiMeltitems
     {
-        private EditSession editSession     = EditSession.Instance;
         private readonly AppConfig m_config = ConfigManager.Load();
         private readonly MeltItems meltBot  = MeltItems.Instance;
 
@@ -27,42 +22,46 @@ namespace App.UI.Features
                 Vector2 buttonSize = new Vector2(ImGui.GetContentRegionAvail().X /3 -5, 0);
                 if (ImGui.Button("Save Cell", buttonSize))
                 {
-                    editSession.Mode    = EditMode.FirstCell;
-                    editSession.Size    = new Vector2(meltBot.CellSize, meltBot.CellSize);
-                    editSession.OnSet   = pos =>
-                    {
-                        meltBot.MeltFirstPos = pos;
-                        m_config.MeltFirstPos =pos;
-                    };
-                    editSession.Active  = true;
+                    var session = new ShapeEditSession();
+                    session.Start(
+                        shape: ShapeType.Square,
+                        size: new Vector2(meltBot.CellSize, meltBot.CellSize),
+                        onSet: pos => {
+                            meltBot.MeltFirstPos = pos;
+                            EditSessionManager.Instance.GetConfig().MeltFirstPos =pos;
+                        });
+                    EditSessionManager.Instance.StartSession(session);
                 }
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip("Select the first cell in the Smelting Furnace");
                 ImGui.SameLine();
                 if (ImGui.Button("Set Melt Down", buttonSize))
                 {
-                    editSession.Mode    = EditMode.MeltBot;
-                    editSession.Size    =meltBot.MeltButtonSize;
-                    editSession.OnSet   = pos =>
-                    {
-                        meltBot.MeltButtonPos = pos;
-                        m_config.MeltButtonPos =pos;
-                    };
-                    editSession.Active  = true;
+                    var session = new ShapeEditSession();
+                    session.Start(
+                        shape: ShapeType.Square,
+                        size: meltBot.MeltButtonSize,
+                        onSet: pos => {
+                            meltBot.MeltButtonPos = pos;
+                            EditSessionManager.Instance.GetConfig().MeltButtonPos = pos;
+                        });
+                    EditSessionManager.Instance.StartSession(session);
                 }
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip("Select the 'Melt Down' Button in the Smelting Furnace");
                 ImGui.SameLine();
                 if (ImGui.Button("Set Close", buttonSize))
                 {
-                    editSession.Mode    = EditMode.SetClose;
-                    editSession.Size    = new Vector2(30, 30);
-                    editSession.OnSet   = pos =>
-                    {
-                        meltBot.MeltCloseBtn = pos;
-                        m_config.MeltCloseBtn =pos;
-                    };
-                    editSession.Active  = true;
+
+                    var session = new ShapeEditSession();
+                    session.Start(
+                        shape: ShapeType.Square,
+                        size: new Vector2(30, 30),
+                        onSet: pos => {
+                            meltBot.MeltCloseBtn = pos;
+                            EditSessionManager.Instance.GetConfig().MeltCloseBtn = pos;
+                        });
+                    EditSessionManager.Instance.StartSession(session);
                 }
                 if (ImGui.IsItemHovered())
                     ImGui.SetTooltip("Select the 'X' Close button in the Smelting Furnace");

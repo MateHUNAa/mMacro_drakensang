@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using mMacro.Core.Models;
+﻿using mMacro.Core.Models;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace mMacro.Core.Managers
 {

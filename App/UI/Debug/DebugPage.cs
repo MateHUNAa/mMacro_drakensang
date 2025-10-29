@@ -1,4 +1,5 @@
-﻿using ImGuiNET;
+﻿using App.UI.EditSession;
+using ImGuiNET;
 using mMacro.Core.Functions.Inventory;
 using mMacro.Core.Models;
 using mMacro.Core.Utils;
@@ -9,18 +10,16 @@ namespace App.UI.Debug
 {
     public static class DebugPage
     {
-
-        private static readonly EditSession editSession    = EditSession.Instance;
         private static readonly Sellbot inventoryScan      = Sellbot.Instance;
         private static readonly ColorPicker colorPicker    = new ColorPicker();
 
-        public static bool m_debugDraw = false;
+        public static bool m_debugDraw = true;
         public static bool DebugDraw
         {
             get => m_debugDraw;
             set => m_debugDraw = value;
         }
-        public static bool m_debugMode = false;
+        public static bool m_debugMode = true;
         public static bool DebugMode
         {
             get => m_debugMode;
@@ -35,35 +34,42 @@ namespace App.UI.Debug
                 Vector4 avgColor = new Vector4(0.5f, 1, 1, 1);
                 if (ImGui.Button("Copy Item Color"))
                 {
-                    editSession.StartEditSession(editSession, (pos) =>
-                    {
-                        Color pickedColor = PixelUtils.GetPixelColor(pos);
-
-                        PixelUtils.ColorRange range = new PixelUtils.ColorRange
+                    var session = new ShapeEditSession();
+                    session.Start(
+                        shape: ShapeType.Square,
+                        onSet: (pos) =>
                         {
-                            R = (pickedColor.R - Settings.Instance.m_Offsets.ColorTolarence, pickedColor.R + Settings.Instance.m_Offsets.ColorTolarence),
-                            G = (pickedColor.G - Settings.Instance.m_Offsets.ColorTolarence, pickedColor.G + Settings.Instance.m_Offsets.ColorTolarence),
-                            B = (pickedColor.B - Settings.Instance.m_Offsets.ColorTolarence, pickedColor.B + Settings.Instance.m_Offsets.ColorTolarence),
-                        };
-                        string codeSnippet = $"new ColorRange {{ R = ({range.R.Min}, {range.R.Max}), G = ({range.G.Min}, {range.G.Max}), B = ({range.B.Min}, {range.B.Max}) }};";
+                            Color pickedColor = PixelUtils.GetPixelColor(pos);
 
-                        ImGui.SetClipboardText(codeSnippet);
-                    }, EditMode.FirstCell, Color.FromArgb(1, 1, 0, 1), inventoryScan.CellSize);
+                            PixelUtils.ColorRange range = new PixelUtils.ColorRange
+                            {
+                                R = (pickedColor.R - Settings.Instance.m_Offsets.ColorTolarence, pickedColor.R + Settings.Instance.m_Offsets.ColorTolarence),
+                                G = (pickedColor.G - Settings.Instance.m_Offsets.ColorTolarence, pickedColor.G + Settings.Instance.m_Offsets.ColorTolarence),
+                                B = (pickedColor.B - Settings.Instance.m_Offsets.ColorTolarence, pickedColor.B + Settings.Instance.m_Offsets.ColorTolarence),
+                            };
+                            string codeSnippet = $"new ColorRange {{ R = ({range.R.Min}, {range.R.Max}), G = ({range.G.Min}, {range.G.Max}), B = ({range.B.Min}, {range.B.Max}) }};";
+
+                            ImGui.SetClipboardText(codeSnippet);
+                        },
+                        color: new Vector4(255,255,0,255),
+                        size: new Vector2(inventoryScan.CellSize, inventoryScan.CellSize));
+                    EditSessionManager.Instance.StartSession(session);
                 }
 
-                colorPicker.Toggle((bool toggled) => {
-                    Console.WriteLine("TOGGLE");
-                    if (toggled)
-                    {
-                        editSession.Mode = EditMode.ColorPicker;
-                        editSession.Active = true;
-                    }
-                    else
-                    {
-                        editSession.Mode = EditMode.None;
-                        editSession.Active = false;
-                    }
-                });
+                // TODO: Create a ColorPickerSession
+                //colorPicker.Toggle((bool toggled) => {
+                //    Console.WriteLine("TOGGLE");
+                //    if (toggled)
+                //    {
+                //        editSession.Mode = EditMode.ColorPicker;
+                //        editSession.Active = true;
+                //    }
+                //    else
+                //    {
+                //        editSession.Mode = EditMode.None;
+                //        editSession.Active = false;
+                //    }
+                //});
 
                 if (ImGui.Button("Get Colors"))
                 {
