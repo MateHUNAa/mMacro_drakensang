@@ -106,7 +106,7 @@ namespace mMacro.Core.Managers
                     (keybind.Modifiers.HasFlag(KeyModifiers.Shift) == shift);
 
                 
-                if( isDown && modifiersMatch)
+                if(isDown && modifiersMatch)
                 {
                     if(!keybind.WasPressed)
                     {
@@ -163,6 +163,13 @@ namespace mMacro.Core.Managers
             keybind.Key = detectedKey.Value;
             keybind.Modifiers = modifiers;
             keybind.WasPressed = true;
+
+            if (detectedKey == Keys.Escape)
+            {
+                keybind.Key = Keys.None;
+                keybind.Modifiers = KeyModifiers.None;
+                keybind.WasPressed = false;
+            }
 
             OnKeybindChanged?.Invoke(m_listeningKeybindName, keybind);
             SaveConfig();
