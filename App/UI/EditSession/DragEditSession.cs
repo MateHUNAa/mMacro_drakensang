@@ -75,12 +75,17 @@ namespace App.UI.EditSession
                     break;
                 case ShapeType.Rectangular:
                 case ShapeType.Square:
-                    windowPos = EndPos + new Vector2(10);
+                    windowPos = EndPos + new Vector2(10, -windowSize.Y + 10);
                     break;
                 default:
-                    windowPos = EndPos + new Vector2(10);
+                    windowPos = EndPos + new Vector2(10, -windowSize.Y + 10);
                     break;
             }
+
+            Vector2 displaySize = ImGui.GetIO().DisplaySize;
+
+            windowPos.X = Math.Clamp(windowPos.X, 0, displaySize.X - windowSize.X);
+            windowPos.Y = Math.Clamp(windowPos.Y, 0, displaySize.Y - windowSize.Y);
 
 
             ImGui.SetNextWindowPos(windowPos, ImGuiCond.Always);
