@@ -130,6 +130,8 @@ $tf/
 
 # Guidance Automation Toolkit
 *.gpState
+WARP.md
+warp.md
 
 # ReSharper is a .NET coding add-in
 _ReSharper*/
