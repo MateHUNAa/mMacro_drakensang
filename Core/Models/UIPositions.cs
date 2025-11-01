@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace mMacro.Core.Models
 {
@@ -18,8 +13,16 @@ namespace mMacro.Core.Models
             public Vector2 MaxBtnPosition { get; set; } = Vector2.Zero;
         }
 
+        public class AutoPoitionPositions
+        {
+            public Vector2 HealthBarStart { get; set; } = Vector2.Zero;
+            public Vector2 HealthBarEnd { get; set; } = Vector2.Zero;
+        }
+
 
         public CraftPositions Crafting {  get; set; } = new CraftPositions();
+        public AutoPoitionPositions AutoPotion { get; set; } = new AutoPoitionPositions();
+
         public static UIPositions Instance { get; } = new UIPositions();
     }
 }

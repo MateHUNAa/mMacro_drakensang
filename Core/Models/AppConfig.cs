@@ -48,5 +48,8 @@ namespace mMacro.Core.Models
         // ================== Settings ==================
         public Settings Settings { get; set; } = new Settings();
 
+        // ================== AutoPot ==================
+        public UIPositions.AutoPoitionPositions AutoPotionPositions { get; set; } = new UIPositions.AutoPoitionPositions();
+
     }
 }
